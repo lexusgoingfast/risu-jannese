@@ -148,7 +148,7 @@ body {
 .rj-role,
 .rj-year-label {
   font-family: var(--rj-font-ui);
-  font-weight: 300;
+  font-weight: 350;
 }
 
 .rj-bio strong {
@@ -159,13 +159,13 @@ body {
 .rj-proj,
 .rj-project {
   font-family: var(--rj-font-ui);
-  font-weight: 300;
+  font-weight: 350;
 }
 
 .rj-cat-header span,
 .rj-category-title {
   font-family: 'Times New Roman', Times, serif;
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .rj-portfolio {
@@ -482,7 +482,7 @@ body {
     width: 209px;
     height: 90px;
     min-height: 0;
-    object-position: 42% center;
+    object-position: center 30%;
     margin: 0;
   }
 
