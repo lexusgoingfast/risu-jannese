@@ -405,8 +405,8 @@ body {
 
 .rj-time {
   position: absolute;
-  bottom: 10px;
-  right: var(--gap-red);
+  bottom: 40px;
+  right: 114px;
   font-size: var(--rj-figma-text);
   color: var(--rj-link);
   font-family: var(--rj-font-ui);
