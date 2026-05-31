@@ -103,6 +103,14 @@
 
 @font-face {
   font-family: 'TT Interfaces';
+  src: url('assets/fonts/TTInterfaces-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT Interfaces';
   src: url('assets/fonts/TTInterfaces-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
@@ -140,7 +148,7 @@ body {
 .rj-role,
 .rj-year-label {
   font-family: var(--rj-font-ui);
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .rj-bio strong {
@@ -151,7 +159,7 @@ body {
 .rj-proj,
 .rj-project {
   font-family: var(--rj-font-ui);
-  font-weight: 400;
+  font-weight: 300;
 }
 
 .rj-cat-header span,
