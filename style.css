@@ -421,12 +421,26 @@ body {
     --rj-mobile-frame-width: 378px;
   }
 
+  html {
+    height: auto;
+    min-height: 100%;
+  }
+
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
   .rj-portfolio {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     padding: var(--gap-green);
     gap: var(--gap-green);
+    transform-origin: top center;
   }
 
   .rj-content {

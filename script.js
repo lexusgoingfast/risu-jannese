@@ -25,7 +25,10 @@ function fitPortfolioToViewport() {
   const styles = window.getComputedStyle(root);
   const designWidth = parseFloat(styles.getPropertyValue('--rj-design-width')) || portfolio.offsetWidth;
   const designHeight = parseFloat(styles.getPropertyValue('--rj-design-height')) || portfolio.offsetHeight;
-  const scale = Math.min(window.innerWidth / designWidth, window.innerHeight / designHeight, 1);
+  const widthScale = document.documentElement.clientWidth / designWidth;
+  const heightScale = window.innerHeight / designHeight;
+  const isMobile = window.matchMedia('(max-width: 767px)').matches;
+  const scale = Math.min(widthScale, isMobile ? 1 : heightScale, 1);
 
   root.style.setProperty('--rj-scale', scale.toFixed(4));
 }
@@ -42,22 +45,24 @@ function initTimer() {
   if (timerElement.getAttribute('data-running')) return true;
   timerElement.setAttribute('data-running', 'true');
 
-  let d = 227;
-  let h = 6;
-  let m = 30;
-  let s = 19;
+  const updateTimer = () => {
+    const now = new Date();
+    const target = new Date(2027, 0, 16, 0, 0, 0, 0);
+    const totalSeconds = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
 
-  setInterval(() => {
-    s++;
-    if (s >= 60) { s = 0; m++; }
-    if (m >= 60) { m = 0; h++; }
-    if (h >= 24) { h = 0; d++; }
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
 
-    const mins = m < 10 ? '0' + m : m;
-    const secs = s < 10 ? '0' + s : s;
+    const mins = String(minutes).padStart(2, '0');
+    const secs = String(seconds).padStart(2, '0');
 
-    timerElement.innerText = `${d}:${h}:${mins}:${secs}`;
-  }, 1000);
+    timerElement.innerText = `${days}:${hours}:${mins}:${secs}`;
+  };
+
+  updateTimer();
+  setInterval(updateTimer, 1000);
 
   return true;
 }
