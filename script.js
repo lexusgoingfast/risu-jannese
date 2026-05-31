@@ -32,7 +32,7 @@ function fitPortfolioToViewport() {
     : Math.max(0, document.documentElement.clientWidth - sideGap * 2);
   const availableHeight = isMobile
     ? Number.POSITIVE_INFINITY
-    : Math.max(0, window.innerHeight - sideGap * 2);
+    : window.innerHeight;
   const scale = Math.min(availableWidth / designWidth, availableHeight / designHeight, 1);
 
   root.style.setProperty('--rj-scale', scale.toFixed(4));

@@ -153,7 +153,7 @@ body {
 
 .rj-bio strong {
   font-family: var(--rj-font-ui);
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .rj-proj,
@@ -264,7 +264,7 @@ body {
 
 .rj-bio {
   flex: 0 0 auto;
-  margin-bottom: var(--gap-red);
+  margin-bottom: var(--gap-green);
 }
 
 .rj-profile-pic {
@@ -306,10 +306,14 @@ body {
   flex: 0 0 auto;
   align-self: flex-start;
   font-size: var(--rj-figma-title);
-  line-height: 1;
+  line-height: normal;
   margin: 0 0 var(--gap-blue) 0;
-  padding-bottom: var(--gap-blue);
-  border-bottom: 1px solid var(--rj-text);
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-skip-ink: auto;
+  text-decoration-thickness: 5%;
+  text-underline-offset: auto;
+  text-underline-position: from-font;
   display: inline-block;
 }
 
@@ -414,7 +418,7 @@ body {
 .rj-time {
   position: absolute;
   bottom: 40px;
-  right: 114px;
+  right: calc(var(--gap-red) * 2);
   font-size: var(--rj-figma-text);
   color: var(--rj-text);
   font-family: var(--rj-font-ui);
