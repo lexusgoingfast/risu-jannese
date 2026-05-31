@@ -408,7 +408,7 @@ body {
   bottom: 40px;
   right: 114px;
   font-size: var(--rj-figma-text);
-  color: var(--rj-link);
+  color: var(--rj-text);
   font-family: var(--rj-font-ui);
 }
 
