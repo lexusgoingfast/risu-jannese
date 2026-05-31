@@ -11,101 +11,28 @@ function wrapWorksLists() {
   });
 }
 
-function getBlockCost(block) {
-  const styles = window.getComputedStyle(block);
-  return block.offsetHeight + parseFloat(styles.marginBottom || '0');
-}
-
 function fitYearLists() {
-  const years = document.querySelector('.rj-years');
-  if (!years) return;
-
-  const blocks = Array.from(years.querySelectorAll(':scope > .rj-year-block'));
-  const expanded = [];
-  let fixedHeight = 0;
-
-  blocks.forEach((block) => {
-    const list = block.querySelector('.rj-works-list');
-    const scroll = block.querySelector('.rj-works-scroll');
-    if (!list || !scroll) return;
-
-    // Measure each list at its natural height first.
+  document.querySelectorAll('.rj-works-scroll').forEach((scroll) => {
     scroll.style.maxHeight = 'none';
-
-    if (list.classList.contains('collapsed')) {
-      fixedHeight += getBlockCost(block);
-    } else {
-      const styles = window.getComputedStyle(block);
-      expanded.push({
-        block,
-        scroll,
-        desired: scroll.scrollHeight,
-        min: block.querySelector('.rj-year-label')?.offsetHeight || 0,
-        margin: parseFloat(styles.marginBottom || '0'),
-      });
-    }
-  });
-
-  if (expanded.length === 0) return;
-
-  let available = years.clientHeight - fixedHeight;
-  expanded.forEach((item) => { available -= item.margin; });
-  available = Math.max(0, available);
-
-  // Give short expanded years their full height first; long years get the
-  // remaining room and scroll internally. This keeps collapsed years visible.
-  const sorted = [...expanded].sort((a, b) => a.desired - b.desired);
-  const sizes = new Map();
-  let remaining = available;
-  let pending = sorted.length;
-
-  for (const item of sorted) {
-    const fairShare = pending > 0 ? remaining / pending : 0;
-    if (item.desired <= fairShare) {
-      sizes.set(item, item.desired);
-      remaining -= item.desired;
-      pending -= 1;
-    }
-  }
-
-  const unsized = sorted.filter((item) => !sizes.has(item));
-  const shared = unsized.length > 0 ? remaining / unsized.length : 0;
-
-  unsized.forEach((item) => {
-    sizes.set(item, Math.max(item.min, shared));
-  });
-
-  expanded.forEach((item) => {
-    const size = Math.max(0, Math.floor(sizes.get(item) || item.min));
-    item.scroll.style.maxHeight = `${size}px`;
   });
 }
 
-function initSpoilers() {
-  const labels = document.querySelectorAll('.rj-year-label');
-  if (labels.length === 0) return false;
+function fitPortfolioToViewport() {
+  const root = document.documentElement;
+  const portfolio = document.querySelector('.rj-portfolio');
+  if (!portfolio) return;
 
+  const styles = window.getComputedStyle(root);
+  const designWidth = parseFloat(styles.getPropertyValue('--rj-design-width')) || portfolio.offsetWidth;
+  const designHeight = parseFloat(styles.getPropertyValue('--rj-design-height')) || portfolio.offsetHeight;
+  const scale = Math.min(window.innerWidth / designWidth, window.innerHeight / designHeight, 1);
+
+  root.style.setProperty('--rj-scale', scale.toFixed(4));
+}
+
+function initWorkLists() {
   wrapWorksLists();
   fitYearLists();
-
-  labels.forEach((label) => {
-    label.addEventListener('click', function () {
-      const toggleIcon = this.querySelector('.rj-toggle');
-      const worksList = this.nextElementSibling;
-      if (!worksList) return;
-
-      if (worksList.classList.contains('collapsed')) {
-        worksList.classList.remove('collapsed');
-        if (toggleIcon) toggleIcon.textContent = 'v';
-      } else {
-        worksList.classList.add('collapsed');
-        if (toggleIcon) toggleIcon.textContent = '>';
-      }
-
-      fitYearLists();
-    });
-  });
-
   return true;
 }
 
@@ -159,12 +86,22 @@ function initMediaFallbacks() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initSpoilers();
+  initWorkLists();
+  fitPortfolioToViewport();
   initTimer();
   initMediaFallbacks();
-  window.addEventListener('resize', fitYearLists);
-  window.addEventListener('load', fitYearLists);
+  window.addEventListener('resize', () => {
+    fitYearLists();
+    fitPortfolioToViewport();
+  });
+  window.addEventListener('load', () => {
+    fitYearLists();
+    fitPortfolioToViewport();
+  });
   if (document.fonts) {
-    document.fonts.ready.then(fitYearLists);
+    document.fonts.ready.then(() => {
+      fitYearLists();
+      fitPortfolioToViewport();
+    });
   }
 });

@@ -72,7 +72,7 @@
   --rj-text: #000000;
   --rj-link: #36237E;
   --rj-border: #E0E0E0;
-  --rj-role-color: #A0A0A0;
+  --rj-role-color: #B8B8B8;
 
   /* Minimal scrollbar (matches borders / role gray) */
   --rj-scroll-thumb: #CDCDCD;
@@ -84,9 +84,13 @@
   --gap-blue: 6px;
 
   --rj-font-ui: 'TT Interfaces', 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --rj-design-width: 1512px;
+  --rj-design-height: 982px;
+  --rj-figma-text: 15.344px;
+  --rj-figma-title: 30.688px;
+  --rj-figma-border: 0.959px;
+  --rj-scale: 1;
 
-  /* Fallback before JS computes the largest safe height per open year */
-  --rj-year-max: 200px;
 }
 
 @font-face {
@@ -159,26 +163,30 @@ body {
 .rj-portfolio {
   display: flex;
   flex-wrap: nowrap;
+  position: relative;
   background-color: var(--rj-bg);
   color: var(--rj-text);
-  font-size: 14px;
-  line-height: 1.4;
-  width: 100%;
-  max-width: 1350px;
-  height: 100vh;
+  font-size: var(--rj-figma-text);
+  line-height: 1.15;
+  width: var(--rj-design-width);
+  max-width: none;
+  height: var(--rj-design-height);
+  flex: 0 0 auto;
   margin: 0 auto;
-  padding: var(--gap-red);
+  padding: var(--gap-red) 89px;
   gap: var(--gap-red);
   box-sizing: border-box;
   overflow: hidden;
+  transform: scale(var(--rj-scale));
+  transform-origin: center center;
 }
 
 .rj-sidebar {
-  flex: 0 0 380px;
+  flex: 0 0 354px;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--rj-border);
-  padding: var(--gap-red);
+  border: var(--rj-figma-border) solid var(--rj-border);
+  padding: var(--gap-green);
   box-sizing: border-box;
   height: 100%;
 }
@@ -187,11 +195,11 @@ body {
   width: 100%;
   flex-grow: 1;
   height: 0;
-  min-height: 400px;
+  min-height: 0;
   object-fit: cover;
   object-position: center;
   margin-bottom: var(--gap-red);
-  border: 1px solid var(--rj-border);
+  border: var(--rj-figma-border) solid var(--rj-border);
   background-color: #F3F3F3;
 }
 
@@ -202,23 +210,23 @@ body {
 }
 
 .rj-star-logo {
-  width: 40px;
+  width: 60px;
   height: auto;
-  margin-bottom: var(--gap-red);
+  margin-bottom: var(--gap-green);
 }
 
 .rj-contacts {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  font-size: 12px;
+  font-size: var(--rj-figma-text);
   color: var(--rj-link);
 }
 
 .rj-content {
   flex: 1;
-  border: 1px solid var(--rj-border);
-  padding: var(--gap-red);
+  border: var(--rj-figma-border) solid var(--rj-border);
+  padding: var(--gap-green);
   box-sizing: border-box;
   height: 100%;
   overflow: hidden;
@@ -230,14 +238,12 @@ body {
 .rj-header-logo {
   display: block;
   flex-shrink: 0;
-  max-width: 380px;
-  margin: -15px auto var(--gap-red) 77px;
+  max-width: 384px;
+  margin: 0 auto var(--gap-red) 97px;
 }
 
-/* Work area is fixed (does NOT scroll). It's a flex column: bio + Photo keep
-   their natural height, the Video block flexes — it grows and pushes Photo
-   down, but only until Photo reaches the bottom, after which the Video years
-   scroll inside themselves and Photo stays pinned. */
+/* The work area follows the Figma frame: bio, always-expanded video work,
+   and photo work are laid out as one fixed composition. */
 .rj-scroll {
   flex: 1 1 auto;
   min-height: 0;
@@ -255,15 +261,21 @@ body {
 
 .rj-profile-pic {
   float: right;
-  width: 120px;
-  height: auto;
+  width: 168px;
+  height: 168px;
+  object-fit: cover;
+  padding: var(--gap-blue);
   margin-left: var(--gap-red);
   margin-bottom: var(--gap-green);
-  border: 1px solid var(--rj-border);
+  border: var(--rj-figma-border) solid var(--rj-border);
 }
 
 .rj-bio p {
   margin: 0 0 var(--gap-green) 0;
+}
+
+.rj-bio p:last-child {
+  margin-bottom: 0;
 }
 
 .rj-category {
@@ -272,34 +284,31 @@ body {
   clear: both;
 }
 
-/* The Video category is the flexible one: it gives up space (shrinks) so
-   Photo never gets pushed off-screen; its years scroll internally instead.
-   margin-top:0 — in a flex column margins don't collapse, so we rely on the
-   bio's margin-bottom alone to keep the heading where it was. */
+/* The Video category follows the mockup as a natural list. Photo sits after it;
+   no individual year gets its own internal scroll. */
 .rj-category--flex {
-  flex: 0 1 auto;
-  min-height: 0;
+  flex: 0 0 auto;
   margin-top: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .rj-category-title {
   flex: 0 0 auto;
   align-self: flex-start;
-  font-size: 1.5rem;
-  margin: 0 0 var(--gap-red) 0;
+  font-size: var(--rj-figma-title);
+  line-height: 1;
+  margin: 0 0 var(--gap-blue) 0;
   padding-bottom: var(--gap-blue);
   border-bottom: 1px solid var(--rj-text);
   display: inline-block;
 }
 
-/* Years list — each year keeps its own height; collapsed labels stay visible. */
+/* Years list — each year keeps its own natural height. */
 .rj-years {
-  flex: 1 1 auto;
-  min-height: 0;
-  overflow: hidden;
+  flex: 0 0 auto;
+  overflow: visible;
 }
 
 .rj-year-block {
@@ -310,23 +319,16 @@ body {
 }
 
 .rj-year-label {
-  width: 70px;
+  width: 85px;
   flex-shrink: 0;
-  cursor: pointer;
+  cursor: default;
   user-select: none;
   display: flex;
   align-items: center;
   gap: var(--gap-blue);
 }
 
-.rj-toggle {
-  display: inline-block;
-  width: 10px;
-}
-
-/* Year label is static. Open/close is instant (1fr ⇄ 0fr).
-   Each year is independent (no shared flex space), so collapsing one never
-   resizes another. */
+/* Year lists are always expanded. */
 .rj-works-list {
   flex: 1;
   min-width: 0;
@@ -334,28 +336,22 @@ body {
   grid-template-rows: 1fr;
 }
 
-.rj-works-list.collapsed {
-  grid-template-rows: 0fr;
-}
-
-/* Clip wrapper — gives the grid row something to collapse. */
 .rj-works-inner {
-  overflow: hidden;
+  overflow: visible;
   min-height: 0;
 }
 
-/* Actual project list — scrolls inside itself once it passes --rj-year-max.
-   Thin minimal scrollbar on the right, only visible when it overflows. */
+/* Actual project list — natural height, no internal year scroll. */
 .rj-works-scroll {
   display: flex;
   flex-direction: column;
   gap: var(--gap-blue);
   width: fit-content;
   max-width: 100%;
-  max-height: var(--rj-year-max);
-  overflow-y: auto;
+  max-height: none;
+  overflow: visible;
   opacity: 1;
-  padding-right: 13px;
+  padding-right: 0;
   overscroll-behavior: contain;
   scrollbar-width: thin;
   scrollbar-color: var(--rj-scroll-thumb) transparent;
@@ -376,10 +372,6 @@ body {
 
 .rj-works-scroll::-webkit-scrollbar-thumb:hover {
   background-color: var(--rj-scroll-thumb-hover);
-}
-
-.rj-works-list.collapsed .rj-works-scroll {
-  opacity: 0;
 }
 
 .rj-work-item {
@@ -415,7 +407,136 @@ body {
   position: absolute;
   bottom: 10px;
   right: var(--gap-red);
-  font-size: 12px;
+  font-size: var(--rj-figma-text);
   color: var(--rj-link);
   font-family: var(--rj-font-ui);
+}
+
+@media (max-width: 767px) {
+  :root {
+    --rj-design-width: 402px;
+    --rj-design-height: 918px;
+    --rj-figma-text: 10.5px;
+    --rj-figma-title: 20px;
+    --rj-mobile-frame-width: 378px;
+  }
+
+  .rj-portfolio {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: var(--gap-green);
+    gap: var(--gap-green);
+  }
+
+  .rj-content {
+    order: 1;
+    flex: 0 0 745px;
+    width: var(--rj-mobile-frame-width);
+    padding: var(--gap-green);
+    position: static;
+  }
+
+  .rj-sidebar {
+    order: 2;
+    flex: 0 0 137px;
+    width: var(--rj-mobile-frame-width);
+    height: 137px;
+    display: grid;
+    grid-template-columns: 209px 1fr;
+    grid-template-rows: 90px 1fr;
+    column-gap: var(--gap-green);
+    row-gap: var(--gap-green);
+    padding: var(--gap-green);
+  }
+
+  .rj-video-avatar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 209px;
+    height: 90px;
+    min-height: 0;
+    margin: 0;
+  }
+
+  .rj-sidebar-footer {
+    display: contents;
+  }
+
+  .rj-star-logo {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+    align-self: start;
+    width: 53px;
+    margin: 0 24px 0 0;
+  }
+
+  .rj-contacts {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    align-self: end;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: var(--gap-green);
+    font-size: var(--rj-figma-text);
+  }
+
+  .rj-header-logo {
+    max-width: 232px;
+    margin: 0 auto var(--gap-red);
+  }
+
+  .rj-scroll {
+    padding-bottom: 0;
+    overflow: visible;
+  }
+
+  .rj-bio {
+    margin-bottom: var(--gap-red);
+  }
+
+  .rj-profile-pic {
+    width: 90px;
+    height: 90px;
+    padding: var(--gap-blue);
+    margin-left: var(--gap-green);
+    margin-bottom: var(--gap-green);
+  }
+
+  .rj-bio p {
+    margin-bottom: var(--gap-green);
+  }
+
+  .rj-category-title {
+    font-size: var(--rj-figma-title);
+    margin-bottom: var(--gap-blue);
+  }
+
+  .rj-year-block {
+    margin-bottom: var(--gap-blue);
+  }
+
+  .rj-year-label {
+    width: 60px;
+    align-items: baseline;
+  }
+
+  .rj-year-label::before {
+    content: "> ";
+  }
+
+  .rj-works-scroll {
+    gap: var(--gap-blue);
+  }
+
+  .rj-project {
+    margin-right: var(--gap-green);
+  }
+
+  .rj-time {
+    bottom: 15px;
+    right: var(--gap-green);
+    font-size: var(--rj-figma-text);
+  }
 }
