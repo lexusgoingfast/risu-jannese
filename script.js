@@ -25,10 +25,15 @@ function fitPortfolioToViewport() {
   const styles = window.getComputedStyle(root);
   const designWidth = parseFloat(styles.getPropertyValue('--rj-design-width')) || portfolio.offsetWidth;
   const designHeight = parseFloat(styles.getPropertyValue('--rj-design-height')) || portfolio.offsetHeight;
-  const widthScale = document.documentElement.clientWidth / designWidth;
-  const heightScale = window.innerHeight / designHeight;
+  const sideGap = parseFloat(styles.getPropertyValue('--gap-red')) || 25;
   const isMobile = window.matchMedia('(max-width: 767px)').matches;
-  const scale = Math.min(widthScale, isMobile ? 1 : heightScale, 1);
+  const availableWidth = isMobile
+    ? document.documentElement.clientWidth
+    : Math.max(0, document.documentElement.clientWidth - sideGap * 2);
+  const availableHeight = isMobile
+    ? Number.POSITIVE_INFINITY
+    : Math.max(0, window.innerHeight - sideGap * 2);
+  const scale = Math.min(availableWidth / designWidth, availableHeight / designHeight, 1);
 
   root.style.setProperty('--rj-scale', scale.toFixed(4));
 }
