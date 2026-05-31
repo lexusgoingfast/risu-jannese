@@ -1,0 +1,294 @@
+:root {
+  --base: 24px;
+  --red: var(--base);
+  --green: calc(var(--base) / 2);
+  --blue: calc(var(--base) / 4);
+
+  --rj-bg: #FEFFFF;
+  --rj-text: #000000;
+  --rj-link: #36237E;
+  --rj-border: #E0E0E0;
+  --rj-role-color: #A0A0A0;
+
+  --gap-red: 24px;
+  --gap-green: 12px;
+  --gap-blue: 6px;
+
+  /* Max height of an expanded year before it scrolls inside itself */
+  --rj-year-max: 220px;
+}
+
+@font-face {
+  font-family: 'TT Interfaces';
+  src: local('TT Interfaces');
+  font-weight: 400;
+  font-display: swap;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: #F3F3F3;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #F3F3F3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.rj-layout,
+.rj-portfolio,
+.rj-bio p,
+.rj-footer-text,
+.rj-role,
+.rj-year-label {
+  font-family: 'TT Interfaces', -apple-system, sans-serif;
+  font-weight: 400;
+}
+
+.rj-bio strong,
+.rj-proj,
+.rj-project {
+  font-family: 'TT Interfaces', -apple-system, sans-serif;
+  font-weight: 500;
+}
+
+.rj-cat-header span,
+.rj-category-title {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: 400;
+}
+
+.rj-portfolio {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: var(--rj-bg);
+  color: var(--rj-text);
+  font-size: 14px;
+  line-height: 1.4;
+  width: 100%;
+  max-width: 1350px;
+  height: 100vh;
+  margin: 0 auto;
+  padding: var(--gap-red);
+  gap: var(--gap-red);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.rj-sidebar {
+  flex: 0 0 380px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--rj-border);
+  padding: var(--gap-red) var(--gap-red) 10px var(--gap-red);
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.rj-video-avatar {
+  width: 100%;
+  flex-grow: 1;
+  height: 0;
+  min-height: 400px;
+  object-fit: cover;
+  object-position: center;
+  margin-bottom: var(--gap-red);
+  border: 1px solid var(--rj-border);
+  background-color: #F3F3F3;
+}
+
+.rj-sidebar-footer {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.rj-star-logo {
+  width: 40px;
+  height: auto;
+  margin-bottom: var(--gap-red);
+}
+
+.rj-contacts {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 12px;
+  color: var(--rj-link);
+}
+
+.rj-content {
+  flex: 1;
+  border: 1px solid var(--rj-border);
+  padding: var(--gap-red);
+  box-sizing: border-box;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.rj-header-logo {
+  display: block;
+  flex-shrink: 0;
+  max-width: 380px;
+  margin: -15px auto var(--gap-red) 77px;
+}
+
+/* Work area is fixed (does NOT scroll) — scrolling happens inside each
+   expanded year instead, so the page never moves. */
+.rj-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  /* room so the last items don't hide behind the absolute timer */
+  padding-bottom: var(--gap-red);
+}
+
+.rj-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.rj-bio {
+  margin-bottom: var(--gap-red);
+}
+
+.rj-profile-pic {
+  float: right;
+  width: 120px;
+  height: auto;
+  margin-left: var(--gap-red);
+  margin-bottom: var(--gap-green);
+  border: 1px solid var(--rj-border);
+}
+
+.rj-bio p {
+  margin: 0 0 var(--gap-green) 0;
+}
+
+.rj-category {
+  margin-top: var(--gap-red);
+  clear: both;
+}
+
+.rj-category-title {
+  font-size: 1.5rem;
+  margin: 0 0 var(--gap-red) 0;
+  padding-bottom: var(--gap-blue);
+  border-bottom: 1px solid var(--rj-text);
+  display: inline-block;
+}
+
+.rj-year-block {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: var(--gap-blue);
+}
+
+.rj-year-label {
+  width: 70px;
+  flex-shrink: 0;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rj-toggle {
+  display: inline-block;
+  width: 10px;
+}
+
+/* Each year expands in place; if its list is taller than --rj-year-max it
+   scrolls INSIDE the year container (hidden scrollbar) instead of growing
+   the page. The inner wrapper is added in JS. */
+.rj-works-list {
+  flex: 1;
+  min-width: 0;
+}
+
+.rj-works-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-blue);
+  max-height: var(--rj-year-max);
+  overflow-y: auto;
+  opacity: 1;
+  transition: max-height 0.35s ease, opacity 0.3s ease;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior: contain;
+}
+
+.rj-works-inner::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.rj-works-list.collapsed > .rj-works-inner {
+  max-height: 0;
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rj-works-inner {
+    transition: none;
+  }
+}
+
+.rj-work-item {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.rj-project {
+  color: var(--rj-link);
+  margin-right: var(--gap-green);
+}
+
+.rj-role {
+  color: var(--rj-role-color);
+}
+
+/* Neutral placeholders while real media is dropped in */
+.rj-media-missing {
+  position: relative;
+  background-color: #F3F3F3;
+}
+
+.rj-profile-pic.rj-media-missing {
+  min-height: 150px;
+}
+
+.rj-star-logo.rj-media-missing {
+  height: 40px;
+}
+
+.rj-time {
+  position: absolute;
+  bottom: 10px;
+  right: var(--gap-red);
+  font-size: 12px;
+  color: var(--rj-link);
+  font-family: 'TT Interfaces', sans-serif;
+}
