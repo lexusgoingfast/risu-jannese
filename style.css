@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap');
+
 :root {
   --base: 24px;
   --red: var(--base);
@@ -18,6 +20,8 @@
   --gap-red: 24px;
   --gap-green: 12px;
   --gap-blue: 6px;
+
+  --rj-font-ui: 'TT Interfaces', 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
   /* Fallback before JS computes the largest safe height per open year */
   --rj-year-max: 200px;
@@ -60,14 +64,14 @@ body {
 .rj-footer-text,
 .rj-role,
 .rj-year-label {
-  font-family: 'TT Interfaces', -apple-system, sans-serif;
+  font-family: var(--rj-font-ui);
   font-weight: 400;
 }
 
 .rj-bio strong,
 .rj-proj,
 .rj-project {
-  font-family: 'TT Interfaces', -apple-system, sans-serif;
+  font-family: var(--rj-font-ui);
   font-weight: 500;
 }
 
@@ -338,5 +342,5 @@ body {
   right: var(--gap-red);
   font-size: 12px;
   color: var(--rj-link);
-  font-family: 'TT Interfaces', sans-serif;
+  font-family: var(--rj-font-ui);
 }
