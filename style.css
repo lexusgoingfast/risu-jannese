@@ -477,7 +477,7 @@ body {
     grid-row: 2;
     align-self: end;
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr auto auto;
     column-gap: var(--gap-green);
     font-size: var(--rj-figma-text);
   }
@@ -535,8 +535,8 @@ body {
   }
 
   .rj-time {
-    bottom: 15px;
-    right: var(--gap-green);
+    position: static;
+    justify-self: end;
     font-size: var(--rj-figma-text);
   }
 }
