@@ -64,10 +64,10 @@
 }
 
 :root {
-  --base: 24px;
+  --base: 25px;
   --red: var(--base);
-  --green: calc(var(--base) / 2);
-  --blue: calc(var(--base) / 4);
+  --green: 12px;
+  --blue: 6px;
 
   --rj-bg: #FEFFFF;
   --rj-text: #000000;
@@ -80,7 +80,7 @@
   --rj-scroll-thumb-hover: #A0A0A0;
   --rj-scroll-width: 6px;
 
-  --gap-red: 24px;
+  --gap-red: 25px;
   --gap-green: 12px;
   --gap-blue: 6px;
 
@@ -166,7 +166,7 @@ body {
   display: flex;
   flex-direction: column;
   border: 1px solid var(--rj-border);
-  padding: var(--gap-red) var(--gap-red) 10px var(--gap-red);
+  padding: var(--gap-red) var(--gap-red) var(--gap-green) var(--gap-red);
   box-sizing: border-box;
   height: 100%;
 }
@@ -192,7 +192,7 @@ body {
 .rj-star-logo {
   width: 40px;
   height: auto;
-  margin-bottom: var(--gap-red);
+  margin-bottom: var(--gap-green);
 }
 
 .rj-contacts {
@@ -304,7 +304,7 @@ body {
   user-select: none;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--gap-blue);
 }
 
 .rj-toggle {

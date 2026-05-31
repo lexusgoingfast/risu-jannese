@@ -37,6 +37,6 @@ Missing media degrades gracefully (neutral placeholder boxes via the
 | Text (`--rj-text`) | `#000000` |
 | Links (`--rj-link`) | `#36237E` |
 
-Spacing scale is driven by `--base: 24px` (red `24` / green `12` / blue `6`).
+Spacing scale is driven by `--base: 25px` (red `25` / green `12` / blue `6`).
 
 Fonts: **TT Interfaces** for body/UI (install locally or swap for a hosted copy), **Times New Roman** for the `Video` / `Photo` category headers.
