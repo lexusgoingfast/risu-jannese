@@ -335,7 +335,7 @@ body {
 .rj-year-block {
   display: flex;
   align-items: flex-start;
-  margin-bottom: var(--gap-blue);
+  margin-bottom: var(--gap-green);
   flex: 0 0 auto;
 }
 
@@ -488,7 +488,7 @@ body {
 .rj-modal-panel {
   width: min(1000px, calc(100vw - 48px));
   aspect-ratio: 1000 / 562.5;
-  padding: var(--gap-red);
+  padding: var(--gap-green);
   border: var(--rj-figma-border) solid var(--rj-border);
   background-color: var(--rj-bg);
   opacity: 0;
