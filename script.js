@@ -158,6 +158,112 @@ function initProjectModal() {
   });
 }
 
+const PHOTO_GALLERIES = {
+  viperr: [
+    'assets/photos/viperr-01.webp',
+    'assets/photos/viperr-02.webp',
+    'assets/photos/viperr-03.webp',
+    'assets/photos/viperr-04.webp',
+    'assets/photos/viperr-05.webp',
+    'assets/photos/viperr-06.webp',
+    'assets/photos/viperr-07.webp',
+    'assets/photos/viperr-08.webp',
+    'assets/photos/viperr-09.webp',
+    'assets/photos/viperr-10.webp',
+    'assets/photos/viperr-11.webp',
+  ],
+  india: [
+    'assets/photos/india-01.png',
+    'assets/photos/india-02.png',
+    'assets/photos/india-03.png',
+    'assets/photos/india-04.png',
+    'assets/photos/india-05.png',
+    'assets/photos/india-06.png',
+    'assets/photos/india-07.png',
+    'assets/photos/india-08.webp',
+    'assets/photos/india-09.webp',
+    'assets/photos/india-10.webp',
+    'assets/photos/india-11.webp',
+    'assets/photos/india-12.webp',
+    'assets/photos/india-13.webp',
+    'assets/photos/india-14.webp',
+    'assets/photos/india-15.webp',
+    'assets/photos/india-16.webp',
+    'assets/photos/india-17.webp',
+    'assets/photos/india-18.webp',
+    'assets/photos/india-19.webp',
+  ],
+};
+
+function initPhotoModal() {
+  const modal = document.getElementById('rj-photo-modal');
+  const media = modal ? modal.querySelector('.rj-photo-modal-media') : null;
+  const panel = modal ? modal.querySelector('.rj-photo-modal-panel') : null;
+  const prevButton = modal ? modal.querySelector('.rj-photo-nav--prev') : null;
+  const nextButton = modal ? modal.querySelector('.rj-photo-nav--next') : null;
+  const triggers = document.querySelectorAll('[data-photo-gallery]');
+  if (!modal || !media || !prevButton || !nextButton || triggers.length === 0) return;
+
+  let activeTrigger = null;
+  let activePhotos = [];
+  let activeIndex = 0;
+
+  const renderPhoto = () => {
+    const src = activePhotos[activeIndex];
+    const title = activeTrigger ? activeTrigger.textContent.trim() : 'Photo project';
+    media.src = src;
+    media.alt = `${title} photo ${activeIndex + 1}`;
+    if (panel) panel.setAttribute('aria-label', `${title} photo ${activeIndex + 1} of ${activePhotos.length}`);
+  };
+
+  const showPhoto = (direction) => {
+    if (activePhotos.length === 0) return;
+    activeIndex = (activeIndex + direction + activePhotos.length) % activePhotos.length;
+    renderPhoto();
+  };
+
+  const openModal = (trigger) => {
+    const gallery = PHOTO_GALLERIES[trigger.dataset.photoGallery] || [];
+    if (gallery.length === 0) return;
+    activeTrigger = trigger;
+    activePhotos = gallery;
+    activeIndex = 0;
+    renderPhoto();
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('rj-modal-open');
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('rj-modal-open');
+    media.removeAttribute('src');
+    if (activeTrigger) activeTrigger.blur();
+    activeTrigger = null;
+    activePhotos = [];
+    activeIndex = 0;
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => openModal(trigger));
+  });
+
+  prevButton.addEventListener('click', () => showPhoto(-1));
+  nextButton.addEventListener('click', () => showPhoto(1));
+
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!modal.classList.contains('is-open')) return;
+    if (event.key === 'Escape') closeModal();
+    if (event.key === 'ArrowLeft') showPhoto(-1);
+    if (event.key === 'ArrowRight') showPhoto(1);
+  });
+}
+
 function initTraymaLogoTilt() {
   const trayma = document.querySelector('.rj-trayma');
   const mark = document.querySelector('.rj-trayma-mark');
@@ -257,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTimer();
   initMediaFallbacks();
   initProjectModal();
+  initPhotoModal();
   initTraymaLogoTilt();
   window.addEventListener('resize', () => {
     fitYearLists();

@@ -88,7 +88,8 @@
         <div class="rj-year-block">
           <div class="rj-year-label">2025:</div>
           <div class="rj-works-list">
-            <div class="rj-work-item"><span class="rj-project">VIPERR X LIFEISWAR — India</span></div>
+            <div class="rj-work-item"><button class="rj-project rj-project-trigger" type="button" data-photo-gallery="india">India</button></div>
+            <div class="rj-work-item"><button class="rj-project rj-project-trigger" type="button" data-photo-gallery="viperr">VIPERR X LIFEISWAR</button></div>
           </div>
         </div>
       </div>
@@ -105,6 +106,14 @@
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
       ></iframe>
+    </div>
+  </div>
+
+  <div class="rj-modal rj-photo-modal" id="rj-photo-modal" aria-hidden="true">
+    <div class="rj-modal-panel rj-photo-modal-panel" role="dialog" aria-modal="true" aria-label="Photo project">
+      <button class="rj-photo-nav rj-photo-nav--prev" type="button" aria-label="Previous photo">&lt;</button>
+      <img class="rj-modal-media rj-photo-modal-media" src="" alt="" draggable="false" />
+      <button class="rj-photo-nav rj-photo-nav--next" type="button" aria-label="Next photo">&gt;</button>
     </div>
   </div>
 
