@@ -532,8 +532,8 @@ body {
 .rj-photo-modal-media {
   aspect-ratio: auto;
   width: auto;
+  height: min(72vh, calc((min(960px, calc(100vw - 48px)) - (var(--gap-green) * 2)) * 0.5625));
   max-width: calc(100vw - 48px - var(--gap-green) - var(--gap-green));
-  max-height: min(72vh, 720px);
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
@@ -542,31 +542,45 @@ body {
 
 .rj-photo-nav {
   position: absolute;
-  top: 50%;
+  top: var(--gap-green);
+  bottom: var(--gap-green);
   z-index: 2;
-  width: 34px;
-  height: 34px;
-  border: var(--rj-figma-border) solid var(--rj-border);
-  background-color: var(--rj-bg);
-  color: var(--rj-link);
+  width: calc((100% - (var(--gap-green) * 2)) / 2);
+  border: 0;
+  background: transparent;
+  color: var(--rj-bg);
   font: inherit;
   line-height: 1;
-  cursor: pointer;
-  transform: translateY(-50%);
+  cursor: none;
+  opacity: 0;
+  transition: opacity 180ms ease;
 }
 
 .rj-photo-nav--prev {
   left: var(--gap-green);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
 }
 
 .rj-photo-nav--next {
   right: var(--gap-green);
+  background: linear-gradient(270deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
 }
 
 .rj-photo-nav:hover,
 .rj-photo-nav:focus-visible {
-  background-color: #D71920;
-  color: var(--rj-bg);
+  opacity: 1;
+}
+
+.rj-photo-nav::after {
+  content: attr(data-label);
+  position: absolute;
+  left: var(--rj-photo-cursor-x, 50%);
+  top: var(--rj-photo-cursor-y, 50%);
+  padding: 2px 4px;
+  background-color: var(--rj-bg);
+  color: var(--rj-link);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
 }
 
 .rj-modal-open {
@@ -870,12 +884,8 @@ body {
   }
 
   .rj-photo-modal-media {
+    height: calc((100vw - var(--gap-red) - (var(--gap-green) * 2)) * 0.5625);
     max-width: calc(100vw - var(--gap-red) - var(--gap-green) - var(--gap-green));
-  }
-
-  .rj-photo-nav {
-    width: 30px;
-    height: 30px;
   }
 
   .rj-photo-nav--prev {

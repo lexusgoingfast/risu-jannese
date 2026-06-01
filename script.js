@@ -178,7 +178,6 @@ const PHOTO_GALLERIES = {
     'assets/photos/india-03.png',
     'assets/photos/india-04.png',
     'assets/photos/india-05.png',
-    'assets/photos/india-06.png',
     'assets/photos/india-07.png',
     'assets/photos/india-08.webp',
     'assets/photos/india-09.webp',
@@ -247,6 +246,16 @@ function initPhotoModal() {
 
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openModal(trigger));
+  });
+
+  const setNavCursor = (button, event) => {
+    const rect = button.getBoundingClientRect();
+    button.style.setProperty('--rj-photo-cursor-x', `${event.clientX - rect.left}px`);
+    button.style.setProperty('--rj-photo-cursor-y', `${event.clientY - rect.top}px`);
+  };
+
+  [prevButton, nextButton].forEach((button) => {
+    button.addEventListener('pointermove', (event) => setNavCursor(button, event));
   });
 
   prevButton.addEventListener('click', () => showPhoto(-1));
