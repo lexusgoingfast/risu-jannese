@@ -226,22 +226,17 @@ function initTraymaLogoTilt() {
     lightTargets.forEach((target) => target.classList.remove('is-light-active'));
   };
 
-  const setScreenLight = (event) => {
-    setMarkLight(event);
-    setTextGroupLight(event, false);
-  };
-
-  const resetScreenLight = () => {
-    resetTilt();
-    resetTextGroupLight();
-  };
-
   if (isTouchLike) {
-    trayma.addEventListener('pointerdown', setScreenLight);
-    trayma.addEventListener('pointermove', setScreenLight);
-    trayma.addEventListener('pointerup', resetScreenLight);
-    trayma.addEventListener('pointercancel', resetScreenLight);
-    trayma.addEventListener('pointerleave', resetScreenLight);
+    mark.addEventListener('pointerdown', setMarkLight);
+    mark.addEventListener('pointermove', setMarkLight);
+    mark.addEventListener('pointerup', resetTilt);
+    mark.addEventListener('pointercancel', resetTilt);
+    mark.addEventListener('pointerleave', resetTilt);
+    trayma.addEventListener('pointerdown', (event) => setTextGroupLight(event));
+    trayma.addEventListener('pointermove', (event) => setTextGroupLight(event));
+    trayma.addEventListener('pointerup', resetTextGroupLight);
+    trayma.addEventListener('pointercancel', resetTextGroupLight);
+    trayma.addEventListener('pointerleave', resetTextGroupLight);
     return;
   }
 
