@@ -159,14 +159,16 @@ function initProjectModal() {
 }
 
 function initTraymaLogoTilt() {
+  const trayma = document.querySelector('.rj-trayma');
   const mark = document.querySelector('.rj-trayma-mark');
   const lightTargets = document.querySelectorAll('.rj-trayma-title, .rj-trayma-subtitle');
-  if (!mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!trayma || !mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let frameId = null;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const isTouchLike = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
-  const setMarkTilt = (event) => {
+  const setMarkLight = (event) => {
     const rect = mark.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
@@ -196,7 +198,7 @@ function initTraymaLogoTilt() {
     };
   };
 
-  const setTextGroupLight = (event) => {
+  const setTextGroupLight = (event, constrainToTextGroup = true) => {
     const rect = getTextGroupRect();
     const isInTextGroup =
       event.clientX >= rect.left &&
@@ -204,7 +206,7 @@ function initTraymaLogoTilt() {
       event.clientY >= rect.top &&
       event.clientY <= rect.bottom;
 
-    if (!isInTextGroup) {
+    if (constrainToTextGroup && !isInTextGroup) {
       lightTargets.forEach((target) => target.classList.remove('is-light-active'));
       return;
     }
@@ -224,10 +226,29 @@ function initTraymaLogoTilt() {
     lightTargets.forEach((target) => target.classList.remove('is-light-active'));
   };
 
-  mark.addEventListener('pointermove', setMarkTilt);
+  const setScreenLight = (event) => {
+    setMarkLight(event);
+    setTextGroupLight(event, false);
+  };
+
+  const resetScreenLight = () => {
+    resetTilt();
+    resetTextGroupLight();
+  };
+
+  if (isTouchLike) {
+    trayma.addEventListener('pointerdown', setScreenLight);
+    trayma.addEventListener('pointermove', setScreenLight);
+    trayma.addEventListener('pointerup', resetScreenLight);
+    trayma.addEventListener('pointercancel', resetScreenLight);
+    trayma.addEventListener('pointerleave', resetScreenLight);
+    return;
+  }
+
+  mark.addEventListener('pointermove', setMarkLight);
   mark.addEventListener('pointerleave', resetTilt);
-  document.querySelector('.rj-trayma')?.addEventListener('pointermove', setTextGroupLight);
-  document.querySelector('.rj-trayma')?.addEventListener('pointerleave', resetTextGroupLight);
+  trayma.addEventListener('pointermove', (event) => setTextGroupLight(event));
+  trayma.addEventListener('pointerleave', resetTextGroupLight);
 }
 
 document.addEventListener('DOMContentLoaded', () => {

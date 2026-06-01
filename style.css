@@ -822,6 +822,7 @@ body {
     --rj-trayma-mobile-mark: clamp(148px, 46vw, 190px);
     --rj-trayma-mobile-mark-height: calc(var(--rj-trayma-mobile-mark) * 1.1547);
     --rj-trayma-mobile-center-y: clamp(218px, 35dvh, 310px);
+    touch-action: none;
     transform: none;
   }
 
