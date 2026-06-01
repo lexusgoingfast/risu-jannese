@@ -59,10 +59,10 @@ function initWorkLists() {
 }
 
 function initTimer() {
-  const timerElement = document.getElementById('rj-timer');
-  if (!timerElement) return false;
-  if (timerElement.getAttribute('data-running')) return true;
-  timerElement.setAttribute('data-running', 'true');
+  const timerElements = document.querySelectorAll('#rj-timer, .rj-timer');
+  if (timerElements.length === 0) return false;
+  if (document.documentElement.getAttribute('data-timer-running')) return true;
+  document.documentElement.setAttribute('data-timer-running', 'true');
 
   const updateTimer = () => {
     const now = new Date();
@@ -77,7 +77,10 @@ function initTimer() {
     const mins = String(minutes).padStart(2, '0');
     const secs = String(seconds).padStart(2, '0');
 
-    timerElement.innerText = `${days}:${hours}:${mins}:${secs}`;
+    const timeText = `${days}:${hours}:${mins}:${secs}`;
+    timerElements.forEach((timerElement) => {
+      timerElement.innerText = timeText;
+    });
   };
 
   updateTimer();
@@ -155,6 +158,36 @@ function initProjectModal() {
   });
 }
 
+function initTraymaLogoTilt() {
+  const mark = document.querySelector('.rj-trayma-mark');
+  if (!mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  let frameId = null;
+
+  const setTilt = (event) => {
+    const rect = mark.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    const rotateX = (-y * 22).toFixed(2);
+    const rotateY = (x * 22).toFixed(2);
+
+    if (frameId) window.cancelAnimationFrame(frameId);
+    frameId = window.requestAnimationFrame(() => {
+      mark.style.setProperty('--rj-trayma-tilt-x', `${rotateX}deg`);
+      mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
+    });
+  };
+
+  const resetTilt = () => {
+    if (frameId) window.cancelAnimationFrame(frameId);
+    mark.style.setProperty('--rj-trayma-tilt-x', '0deg');
+    mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
+  };
+
+  mark.addEventListener('pointermove', setTilt);
+  mark.addEventListener('pointerleave', resetTilt);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initWorkLists();
   fitPortfolioToViewport();
@@ -162,6 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTimer();
   initMediaFallbacks();
   initProjectModal();
+  initTraymaLogoTilt();
   window.addEventListener('resize', () => {
     fitYearLists();
     fitPortfolioToViewport();

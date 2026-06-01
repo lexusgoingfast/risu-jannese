@@ -544,7 +544,14 @@ body {
   left: 50%;
   width: 324.213px;
   height: 374.373px;
-  transform: translate(-50%, -50%);
+  transform:
+    translate(-50%, -50%)
+    perspective(760px)
+    rotateX(var(--rj-trayma-tilt-x, 0deg))
+    rotateY(var(--rj-trayma-tilt-y, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 220ms ease;
+  will-change: transform;
 }
 
 .rj-trayma-mark-img {
@@ -610,6 +617,10 @@ body {
   font-weight: 400;
   line-height: normal;
   white-space: nowrap;
+}
+
+.rj-trayma-time-mobile {
+  display: none;
 }
 
 @media (max-width: 767px) {
@@ -767,5 +778,24 @@ body {
     overflow: hidden;
     align-items: center;
     background-color: #000000;
+  }
+
+  .rj-trayma .rj-trayma-time {
+    display: none;
+  }
+
+  .rj-trayma-time-mobile {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    z-index: 2;
+    display: block;
+    transform: translateX(-50%);
+    color: #FFFFFF;
+    font-family: var(--rj-font-ui);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: normal;
+    white-space: nowrap;
   }
 }
