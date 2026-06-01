@@ -168,18 +168,14 @@ function initTraymaLogoTilt() {
 
   const setMarkTilt = (event) => {
     const rect = mark.getBoundingClientRect();
-    const x = clamp((event.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
-    const y = clamp((event.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
-    const rotateX = (-y * 22).toFixed(2);
-    const rotateY = (x * 22).toFixed(2);
-    const lightX = ((x + 0.5) * 100).toFixed(2);
-    const lightY = ((y + 0.5) * 100).toFixed(2);
+    const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
+    const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
+    const lightX = (x * 100).toFixed(2);
+    const lightY = (y * 100).toFixed(2);
 
     if (frameId) window.cancelAnimationFrame(frameId);
     frameId = window.requestAnimationFrame(() => {
       mark.classList.add('is-light-active');
-      mark.style.setProperty('--rj-trayma-tilt-x', `${rotateX}deg`);
-      mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
       mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
       mark.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
     });
@@ -188,8 +184,6 @@ function initTraymaLogoTilt() {
   const resetTilt = () => {
     if (frameId) window.cancelAnimationFrame(frameId);
     mark.classList.remove('is-light-active');
-    mark.style.setProperty('--rj-trayma-tilt-x', '0deg');
-    mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
   };
 
   const getTextGroupRect = () => {

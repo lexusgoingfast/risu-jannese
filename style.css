@@ -546,14 +546,10 @@ body {
   left: 50%;
   width: 324.213px;
   height: 374.373px;
-  transform:
-    translate(-50%, -50%)
-    perspective(760px)
-    rotateX(var(--rj-trayma-tilt-x, 0deg))
-    rotateY(var(--rj-trayma-tilt-y, 0deg));
-  transform-style: preserve-3d;
-  transition: transform 220ms ease;
-  will-change: transform;
+  transform: translate(-50%, -50%);
+  transform-style: flat;
+  transition: none;
+  will-change: auto;
 }
 
 .rj-trayma-mark-img {
