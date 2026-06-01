@@ -165,9 +165,32 @@ function initTraymaLogoTilt() {
   if (!trayma || !mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let frameId = null;
+  let resetTimer = null;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const getLightZone = () => {
+    const rects = [mark, ...lightTargets].map((target) => target.getBoundingClientRect());
+    const padding = 34;
+    return {
+      left: Math.min(...rects.map((rect) => rect.left)) - padding,
+      right: Math.max(...rects.map((rect) => rect.right)) + padding,
+      top: Math.min(...rects.map((rect) => rect.top)) - padding,
+      bottom: Math.max(...rects.map((rect) => rect.bottom)) + padding,
+    };
+  };
 
-  const setTilt = (event) => {
+  const setMarkTilt = (event) => {
+    const zone = getLightZone();
+    const isInLightZone =
+      event.clientX >= zone.left &&
+      event.clientX <= zone.right &&
+      event.clientY >= zone.top &&
+      event.clientY <= zone.bottom;
+
+    if (!isInLightZone) {
+      resetTilt();
+      return;
+    }
+
     const rect = mark.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
     const y = clamp((event.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
@@ -185,7 +208,9 @@ function initTraymaLogoTilt() {
     });
 
     if (frameId) window.cancelAnimationFrame(frameId);
+    if (resetTimer) window.clearTimeout(resetTimer);
     frameId = window.requestAnimationFrame(() => {
+      trayma.classList.add('is-light-active');
       mark.style.setProperty('--rj-trayma-tilt-x', `${rotateX}deg`);
       mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
       mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
@@ -199,17 +224,21 @@ function initTraymaLogoTilt() {
 
   const resetTilt = () => {
     if (frameId) window.cancelAnimationFrame(frameId);
+    if (resetTimer) window.clearTimeout(resetTimer);
+    trayma.classList.remove('is-light-active');
     mark.style.setProperty('--rj-trayma-tilt-x', '0deg');
     mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
-    mark.style.setProperty('--rj-trayma-light-x', '50%');
-    mark.style.setProperty('--rj-trayma-light-y', '42%');
-    lightTargets.forEach((target) => {
-      target.style.setProperty('--rj-trayma-text-light-x', '50%');
-      target.style.setProperty('--rj-trayma-text-light-y', '50%');
-    });
+    resetTimer = window.setTimeout(() => {
+      mark.style.setProperty('--rj-trayma-light-x', '50%');
+      mark.style.setProperty('--rj-trayma-light-y', '42%');
+      lightTargets.forEach((target) => {
+        target.style.setProperty('--rj-trayma-text-light-x', '50%');
+        target.style.setProperty('--rj-trayma-text-light-y', '50%');
+      });
+    }, 650);
   };
 
-  trayma.addEventListener('pointermove', setTilt);
+  trayma.addEventListener('pointermove', setMarkTilt);
   trayma.addEventListener('pointerleave', resetTilt);
 }
 
