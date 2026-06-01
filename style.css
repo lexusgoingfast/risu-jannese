@@ -403,14 +403,15 @@ body {
 
 .rj-project {
   color: var(--rj-link);
-  margin-right: var(--gap-green);
+  padding: 0 4px;
+  margin-left: -4px;
+  margin-right: calc(var(--gap-green) - 4px);
 }
 
 .rj-work-item:hover .rj-project,
 .rj-work-item:focus-within .rj-project {
   background-color: #D71920;
   color: var(--rj-bg);
-  padding: 0 4px;
 }
 
 .rj-role {
