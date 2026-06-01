@@ -98,8 +98,9 @@ function initMediaFallbacks() {
 function initProjectModal() {
   const modal = document.getElementById('rj-project-modal');
   const media = modal ? modal.querySelector('.rj-modal-media') : null;
-  const triggers = document.querySelectorAll('[data-project-modal="gosha"]');
-  if (!modal || triggers.length === 0) return;
+  const panel = modal ? modal.querySelector('.rj-modal-panel') : null;
+  const triggers = document.querySelectorAll('[data-video-id]');
+  if (!modal || !media || triggers.length === 0) return;
 
   let activeTrigger = null;
   let mediaResetTimer = null;
@@ -107,9 +108,10 @@ function initProjectModal() {
   const openModal = (trigger) => {
     if (mediaResetTimer) window.clearTimeout(mediaResetTimer);
     activeTrigger = trigger;
-    if (media && !media.getAttribute('src')) {
-      media.setAttribute('src', media.dataset.src);
-    }
+    const title = trigger.textContent.trim();
+    media.setAttribute('src', `https://www.youtube-nocookie.com/embed/${trigger.dataset.videoId}?rel=0`);
+    media.setAttribute('title', title);
+    if (panel) panel.setAttribute('aria-label', title);
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('rj-modal-open');
@@ -122,7 +124,7 @@ function initProjectModal() {
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
     mediaResetTimer = window.setTimeout(() => {
-      if (media) media.removeAttribute('src');
+      media.removeAttribute('src');
     }, 420);
   };
 
