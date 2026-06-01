@@ -639,10 +639,6 @@ body {
     align-items: baseline;
   }
 
-  .rj-year-label::before {
-    content: "> ";
-  }
-
   .rj-works-scroll {
     gap: var(--gap-blue);
   }
