@@ -536,6 +536,8 @@ body {
   background-color: #000000;
   transform: scale(var(--rj-trayma-scale));
   transform-origin: center center;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .rj-trayma-mark {
@@ -572,7 +574,7 @@ body {
 }
 
 .rj-trayma-mark-img--base {
-  background-color: #0C0C0C;
+  background-color: #000000;
   mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   opacity: 1;
@@ -593,17 +595,14 @@ body {
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  color: #0C0C0C;
+  color: #000000;
   font-family: 'Times New Roman', Times, serif;
   font-size: 100px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  background:
-    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, #0C0C0C 82%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  -webkit-text-fill-color: #000000;
   transition: color 620ms ease;
 }
 
@@ -613,23 +612,25 @@ body {
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  color: #0C0C0C;
+  color: #000000;
   font-family: 'Times New Roman', Times, serif;
   font-size: 25px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  background:
-    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, #0C0C0C 82%);
-  background-clip: text;
-  -webkit-background-clip: text;
+  -webkit-text-fill-color: #000000;
   transition: color 620ms ease;
 }
 
 .rj-trayma-title.is-light-active,
 .rj-trayma-subtitle.is-light-active {
+  background:
+    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, #000000 82%);
+  background-clip: text;
+  -webkit-background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 .rj-trayma-time {

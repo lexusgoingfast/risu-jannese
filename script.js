@@ -192,26 +192,48 @@ function initTraymaLogoTilt() {
     mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
   };
 
-  const setTextLight = (target, event) => {
-    const rect = target.getBoundingClientRect();
-    const lightX = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100).toFixed(2);
-    const lightY = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100).toFixed(2);
-
-    target.classList.add('is-light-active');
-    target.style.setProperty('--rj-trayma-text-light-x', `${lightX}%`);
-    target.style.setProperty('--rj-trayma-text-light-y', `${lightY}%`);
+  const getTextGroupRect = () => {
+    const rects = Array.from(lightTargets, (target) => target.getBoundingClientRect());
+    return {
+      left: Math.min(...rects.map((rect) => rect.left)),
+      right: Math.max(...rects.map((rect) => rect.right)),
+      top: Math.min(...rects.map((rect) => rect.top)),
+      bottom: Math.max(...rects.map((rect) => rect.bottom)),
+    };
   };
 
-  const resetTextLight = (target) => {
-    target.classList.remove('is-light-active');
+  const setTextGroupLight = (event) => {
+    const rect = getTextGroupRect();
+    const isInTextGroup =
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom;
+
+    if (!isInTextGroup) {
+      lightTargets.forEach((target) => target.classList.remove('is-light-active'));
+      return;
+    }
+
+    lightTargets.forEach((target) => {
+      const targetRect = target.getBoundingClientRect();
+      const lightX = clamp(((event.clientX - targetRect.left) / targetRect.width) * 100, 0, 100).toFixed(2);
+      const lightY = clamp(((event.clientY - targetRect.top) / targetRect.height) * 100, 0, 100).toFixed(2);
+
+      target.classList.add('is-light-active');
+      target.style.setProperty('--rj-trayma-text-light-x', `${lightX}%`);
+      target.style.setProperty('--rj-trayma-text-light-y', `${lightY}%`);
+    });
+  };
+
+  const resetTextGroupLight = () => {
+    lightTargets.forEach((target) => target.classList.remove('is-light-active'));
   };
 
   mark.addEventListener('pointermove', setMarkTilt);
   mark.addEventListener('pointerleave', resetTilt);
-  lightTargets.forEach((target) => {
-    target.addEventListener('pointermove', (event) => setTextLight(target, event));
-    target.addEventListener('pointerleave', () => resetTextLight(target));
-  });
+  document.querySelector('.rj-trayma')?.addEventListener('pointermove', setTextGroupLight);
+  document.querySelector('.rj-trayma')?.addEventListener('pointerleave', resetTextGroupLight);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
