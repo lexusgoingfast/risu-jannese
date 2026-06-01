@@ -38,6 +38,20 @@ function fitPortfolioToViewport() {
   root.style.setProperty('--rj-scale', scale.toFixed(4));
 }
 
+function fitTraymaToViewport() {
+  const root = document.documentElement;
+  const trayma = document.querySelector('.rj-trayma');
+  if (!trayma) return;
+
+  const scale = Math.min(
+    document.documentElement.clientWidth / 1856,
+    window.innerHeight / 1024,
+    1
+  );
+
+  root.style.setProperty('--rj-trayma-scale', scale.toFixed(4));
+}
+
 function initWorkLists() {
   wrapWorksLists();
   fitYearLists();
@@ -144,21 +158,25 @@ function initProjectModal() {
 document.addEventListener('DOMContentLoaded', () => {
   initWorkLists();
   fitPortfolioToViewport();
+  fitTraymaToViewport();
   initTimer();
   initMediaFallbacks();
   initProjectModal();
   window.addEventListener('resize', () => {
     fitYearLists();
     fitPortfolioToViewport();
+    fitTraymaToViewport();
   });
   window.addEventListener('load', () => {
     fitYearLists();
     fitPortfolioToViewport();
+    fitTraymaToViewport();
   });
   if (document.fonts) {
     document.fonts.ready.then(() => {
       fitYearLists();
       fitPortfolioToViewport();
+      fitTraymaToViewport();
     });
   }
 });
