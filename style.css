@@ -403,8 +403,10 @@ body {
 
 .rj-project {
   color: var(--rj-link);
-  padding: 0 4px;
+  padding: 4px;
   margin-left: -4px;
+  margin-top: -4px;
+  margin-bottom: -4px;
   margin-right: calc(var(--gap-green) - 4px);
 }
 
