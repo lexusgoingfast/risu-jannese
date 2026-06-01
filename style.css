@@ -563,7 +563,12 @@ body {
 }
 
 .rj-trayma-mark-img--gradient {
+  background:
+    radial-gradient(circle at var(--rj-trayma-gradient-x, 50%) var(--rj-trayma-gradient-y, 0%), #FFFFFF 0%, #D8D8D8 34%, #999999 78%);
+  mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
+  -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   opacity: 1;
+  transition: background 220ms ease;
 }
 
 .rj-trayma-mark-img--white {
@@ -778,6 +783,29 @@ body {
     overflow: hidden;
     align-items: center;
     background-color: #000000;
+  }
+
+  .rj-trayma {
+    width: 100vw;
+    height: 100vh;
+    transform: none;
+  }
+
+  .rj-trayma-mark {
+    top: calc(50% - 112px);
+    width: clamp(188px, 58vw, 260px);
+    height: auto;
+    aspect-ratio: 324.213 / 374.373;
+  }
+
+  .rj-trayma-title {
+    top: calc(50% + 82px);
+    font-size: clamp(56px, 18vw, 78px);
+  }
+
+  .rj-trayma-subtitle {
+    top: calc(50% + 152px);
+    font-size: clamp(14px, 4.4vw, 19px);
   }
 
   .rj-trayma .rj-trayma-time {

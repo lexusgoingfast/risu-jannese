@@ -170,11 +170,15 @@ function initTraymaLogoTilt() {
     const y = (event.clientY - rect.top) / rect.height - 0.5;
     const rotateX = (-y * 22).toFixed(2);
     const rotateY = (x * 22).toFixed(2);
+    const gradientX = ((x + 0.5) * 100).toFixed(2);
+    const gradientY = ((y + 0.5) * 100).toFixed(2);
 
     if (frameId) window.cancelAnimationFrame(frameId);
     frameId = window.requestAnimationFrame(() => {
       mark.style.setProperty('--rj-trayma-tilt-x', `${rotateX}deg`);
       mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
+      mark.style.setProperty('--rj-trayma-gradient-x', `${gradientX}%`);
+      mark.style.setProperty('--rj-trayma-gradient-y', `${gradientY}%`);
     });
   };
 
@@ -182,6 +186,8 @@ function initTraymaLogoTilt() {
     if (frameId) window.cancelAnimationFrame(frameId);
     mark.style.setProperty('--rj-trayma-tilt-x', '0deg');
     mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
+    mark.style.setProperty('--rj-trayma-gradient-x', '50%');
+    mark.style.setProperty('--rj-trayma-gradient-y', '0%');
   };
 
   mark.addEventListener('pointermove', setTilt);
