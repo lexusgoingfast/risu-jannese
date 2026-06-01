@@ -159,19 +159,30 @@ function initProjectModal() {
 }
 
 function initTraymaLogoTilt() {
+  const trayma = document.querySelector('.rj-trayma');
   const mark = document.querySelector('.rj-trayma-mark');
-  if (!mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const lightTargets = document.querySelectorAll('.rj-trayma-title, .rj-trayma-subtitle');
+  if (!trayma || !mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let frameId = null;
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
 
   const setTilt = (event) => {
     const rect = mark.getBoundingClientRect();
-    const x = (event.clientX - rect.left) / rect.width - 0.5;
-    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    const x = clamp((event.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
+    const y = clamp((event.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
     const rotateX = (-y * 22).toFixed(2);
     const rotateY = (x * 22).toFixed(2);
     const lightX = ((x + 0.5) * 100).toFixed(2);
     const lightY = ((y + 0.5) * 100).toFixed(2);
+    const textLights = Array.from(lightTargets, (target) => {
+      const targetRect = target.getBoundingClientRect();
+      return {
+        target,
+        x: clamp(((event.clientX - targetRect.left) / targetRect.width) * 100, 0, 100).toFixed(2),
+        y: clamp(((event.clientY - targetRect.top) / targetRect.height) * 100, 0, 100).toFixed(2),
+      };
+    });
 
     if (frameId) window.cancelAnimationFrame(frameId);
     frameId = window.requestAnimationFrame(() => {
@@ -179,6 +190,10 @@ function initTraymaLogoTilt() {
       mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
       mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
       mark.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
+      textLights.forEach(({ target, x: targetX, y: targetY }) => {
+        target.style.setProperty('--rj-trayma-text-light-x', `${targetX}%`);
+        target.style.setProperty('--rj-trayma-text-light-y', `${targetY}%`);
+      });
     });
   };
 
@@ -188,10 +203,14 @@ function initTraymaLogoTilt() {
     mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
     mark.style.setProperty('--rj-trayma-light-x', '50%');
     mark.style.setProperty('--rj-trayma-light-y', '42%');
+    lightTargets.forEach((target) => {
+      target.style.setProperty('--rj-trayma-text-light-x', '50%');
+      target.style.setProperty('--rj-trayma-text-light-y', '50%');
+    });
   };
 
-  mark.addEventListener('pointermove', setTilt);
-  mark.addEventListener('pointerleave', resetTilt);
+  trayma.addEventListener('pointermove', setTilt);
+  trayma.addEventListener('pointerleave', resetTilt);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
