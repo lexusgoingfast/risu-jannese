@@ -95,11 +95,47 @@ function initMediaFallbacks() {
   }
 }
 
+function initProjectModal() {
+  const modal = document.getElementById('rj-project-modal');
+  const triggers = document.querySelectorAll('[data-project-modal="gosha"]');
+  if (!modal || triggers.length === 0) return;
+
+  let activeTrigger = null;
+
+  const openModal = (trigger) => {
+    activeTrigger = trigger;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('rj-modal-open');
+  };
+
+  const closeModal = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('rj-modal-open');
+    if (activeTrigger) activeTrigger.focus();
+    activeTrigger = null;
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', () => openModal(trigger));
+  });
+
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initWorkLists();
   fitPortfolioToViewport();
   initTimer();
   initMediaFallbacks();
+  initProjectModal();
   window.addEventListener('resize', () => {
     fitYearLists();
     fitPortfolioToViewport();

@@ -403,11 +403,22 @@ body {
 
 .rj-project {
   color: var(--rj-link);
-  padding: 4px;
+  padding: 2px 4px;
   margin-left: -4px;
-  margin-top: -4px;
-  margin-bottom: -4px;
+  margin-top: -2px;
+  margin-bottom: -2px;
   margin-right: calc(var(--gap-green) - 4px);
+}
+
+.rj-project-trigger {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  font: inherit;
+  line-height: inherit;
+  cursor: pointer;
+  text-align: left;
 }
 
 .rj-work-item:hover .rj-project,
@@ -450,6 +461,48 @@ body {
   font-size: var(--rj-figma-text);
   color: var(--rj-text);
   font-family: var(--rj-font-ui);
+}
+
+.rj-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-red);
+  background:
+    radial-gradient(circle at center, rgba(149, 149, 149, 0.8) 0%, rgba(75, 75, 75, 0.72) 42%, rgba(0, 0, 0, 0.78) 100%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.rj-modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.rj-modal-panel {
+  width: min(1000px, calc(100vw - 48px));
+  aspect-ratio: 1000 / 562.5;
+  padding: 24px 25px 25px;
+  border: var(--rj-figma-border) solid var(--rj-border);
+  background-color: var(--rj-bg);
+}
+
+.rj-modal-media {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: var(--rj-figma-border) solid var(--rj-border);
+}
+
+.rj-modal-open {
+  overflow: hidden;
 }
 
 @media (max-width: 767px) {
@@ -589,6 +642,15 @@ body {
 
   .rj-project {
     margin-right: var(--gap-green);
+  }
+
+  .rj-modal {
+    padding: var(--gap-green);
+  }
+
+  .rj-modal-panel {
+    width: calc(100vw - var(--gap-red));
+    padding: var(--gap-green);
   }
 
   .rj-time {
