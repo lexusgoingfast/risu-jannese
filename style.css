@@ -631,6 +631,13 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
+.rj-trayma-title.is-light-hinted::after,
+.rj-trayma-subtitle.is-light-hinted::after {
+  --rj-trayma-text-light-x: 50%;
+  --rj-trayma-text-light-y: 45%;
+  opacity: 0.16;
+}
+
 .rj-trayma-title.is-light-active::after,
 .rj-trayma-subtitle.is-light-active::after {
   opacity: 1;

@@ -178,6 +178,7 @@ function initTraymaLogoTilt() {
     if (frameId) window.cancelAnimationFrame(frameId);
     frameId = window.requestAnimationFrame(() => {
       mark.classList.add('is-light-active');
+      lightTargets.forEach((target) => target.classList.add('is-light-hinted'));
       mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
       mark.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
     });
@@ -186,6 +187,7 @@ function initTraymaLogoTilt() {
   const resetTilt = () => {
     if (frameId) window.cancelAnimationFrame(frameId);
     mark.classList.remove('is-light-active');
+    lightTargets.forEach((target) => target.classList.remove('is-light-hinted'));
   };
 
   const getTextGroupRect = () => {
