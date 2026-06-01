@@ -579,11 +579,11 @@ body {
   transition: opacity 620ms ease;
 }
 
-.rj-trayma.is-light-active .rj-trayma-mark-img--light {
+.rj-trayma-mark.is-light-active .rj-trayma-mark-img--light {
   opacity: 1;
 }
 
-.rj-trayma.is-light-active .rj-trayma-mark-img--base {
+.rj-trayma-mark.is-light-active .rj-trayma-mark-img--base {
   opacity: 0.24;
 }
 
@@ -627,8 +627,8 @@ body {
   transition: color 620ms ease;
 }
 
-.rj-trayma.is-light-active .rj-trayma-title,
-.rj-trayma.is-light-active .rj-trayma-subtitle {
+.rj-trayma-title.is-light-active,
+.rj-trayma-subtitle.is-light-active {
   color: transparent;
 }
 

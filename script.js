@@ -159,38 +159,14 @@ function initProjectModal() {
 }
 
 function initTraymaLogoTilt() {
-  const trayma = document.querySelector('.rj-trayma');
   const mark = document.querySelector('.rj-trayma-mark');
   const lightTargets = document.querySelectorAll('.rj-trayma-title, .rj-trayma-subtitle');
-  if (!trayma || !mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let frameId = null;
-  let resetTimer = null;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-  const getLightZone = () => {
-    const rects = [mark, ...lightTargets].map((target) => target.getBoundingClientRect());
-    const padding = 34;
-    return {
-      left: Math.min(...rects.map((rect) => rect.left)) - padding,
-      right: Math.max(...rects.map((rect) => rect.right)) + padding,
-      top: Math.min(...rects.map((rect) => rect.top)) - padding,
-      bottom: Math.max(...rects.map((rect) => rect.bottom)) + padding,
-    };
-  };
 
   const setMarkTilt = (event) => {
-    const zone = getLightZone();
-    const isInLightZone =
-      event.clientX >= zone.left &&
-      event.clientX <= zone.right &&
-      event.clientY >= zone.top &&
-      event.clientY <= zone.bottom;
-
-    if (!isInLightZone) {
-      resetTilt();
-      return;
-    }
-
     const rect = mark.getBoundingClientRect();
     const x = clamp((event.clientX - rect.left) / rect.width - 0.5, -0.5, 0.5);
     const y = clamp((event.clientY - rect.top) / rect.height - 0.5, -0.5, 0.5);
@@ -198,48 +174,44 @@ function initTraymaLogoTilt() {
     const rotateY = (x * 22).toFixed(2);
     const lightX = ((x + 0.5) * 100).toFixed(2);
     const lightY = ((y + 0.5) * 100).toFixed(2);
-    const textLights = Array.from(lightTargets, (target) => {
-      const targetRect = target.getBoundingClientRect();
-      return {
-        target,
-        x: clamp(((event.clientX - targetRect.left) / targetRect.width) * 100, 0, 100).toFixed(2),
-        y: clamp(((event.clientY - targetRect.top) / targetRect.height) * 100, 0, 100).toFixed(2),
-      };
-    });
 
     if (frameId) window.cancelAnimationFrame(frameId);
-    if (resetTimer) window.clearTimeout(resetTimer);
     frameId = window.requestAnimationFrame(() => {
-      trayma.classList.add('is-light-active');
+      mark.classList.add('is-light-active');
       mark.style.setProperty('--rj-trayma-tilt-x', `${rotateX}deg`);
       mark.style.setProperty('--rj-trayma-tilt-y', `${rotateY}deg`);
       mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
       mark.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
-      textLights.forEach(({ target, x: targetX, y: targetY }) => {
-        target.style.setProperty('--rj-trayma-text-light-x', `${targetX}%`);
-        target.style.setProperty('--rj-trayma-text-light-y', `${targetY}%`);
-      });
     });
   };
 
   const resetTilt = () => {
     if (frameId) window.cancelAnimationFrame(frameId);
-    if (resetTimer) window.clearTimeout(resetTimer);
-    trayma.classList.remove('is-light-active');
+    mark.classList.remove('is-light-active');
     mark.style.setProperty('--rj-trayma-tilt-x', '0deg');
     mark.style.setProperty('--rj-trayma-tilt-y', '0deg');
-    resetTimer = window.setTimeout(() => {
-      mark.style.setProperty('--rj-trayma-light-x', '50%');
-      mark.style.setProperty('--rj-trayma-light-y', '42%');
-      lightTargets.forEach((target) => {
-        target.style.setProperty('--rj-trayma-text-light-x', '50%');
-        target.style.setProperty('--rj-trayma-text-light-y', '50%');
-      });
-    }, 650);
   };
 
-  trayma.addEventListener('pointermove', setMarkTilt);
-  trayma.addEventListener('pointerleave', resetTilt);
+  const setTextLight = (target, event) => {
+    const rect = target.getBoundingClientRect();
+    const lightX = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100).toFixed(2);
+    const lightY = clamp(((event.clientY - rect.top) / rect.height) * 100, 0, 100).toFixed(2);
+
+    target.classList.add('is-light-active');
+    target.style.setProperty('--rj-trayma-text-light-x', `${lightX}%`);
+    target.style.setProperty('--rj-trayma-text-light-y', `${lightY}%`);
+  };
+
+  const resetTextLight = (target) => {
+    target.classList.remove('is-light-active');
+  };
+
+  mark.addEventListener('pointermove', setMarkTilt);
+  mark.addEventListener('pointerleave', resetTilt);
+  lightTargets.forEach((target) => {
+    target.addEventListener('pointermove', (event) => setTextLight(target, event));
+    target.addEventListener('pointerleave', () => resetTextLight(target));
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
