@@ -406,8 +406,24 @@ body {
   margin-right: var(--gap-green);
 }
 
+.rj-work-item:hover .rj-project,
+.rj-work-item:focus-within .rj-project {
+  background-color: #D71920;
+  color: var(--rj-bg);
+  padding: 0 4px;
+}
+
 .rj-role {
   color: var(--rj-role-color);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 120ms ease, visibility 120ms ease;
+}
+
+.rj-work-item:hover .rj-role,
+.rj-work-item:focus-within .rj-role {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Neutral placeholders while real media is dropped in */
