@@ -210,6 +210,10 @@ body {
   margin-bottom: var(--gap-red);
   border: var(--rj-figma-border) solid var(--rj-border);
   background-color: #F3F3F3;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
 }
 
 .rj-sidebar-footer {
@@ -264,6 +268,10 @@ body {
   flex-shrink: 0;
   max-width: 384px;
   margin: 0 auto var(--gap-red) 97px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
 }
 
 /* The work area follows the Figma frame: bio, always-expanded video work,
@@ -428,8 +436,8 @@ body {
   text-align: left;
 }
 
-.rj-work-item:hover .rj-project,
-.rj-work-item:focus-within .rj-project {
+.rj-project:hover,
+.rj-project:focus-visible {
   background-color: #D71920;
   color: var(--rj-bg);
 }
@@ -441,8 +449,8 @@ body {
   transition: opacity 120ms ease, visibility 120ms ease;
 }
 
-.rj-work-item:hover .rj-role,
-.rj-work-item:focus-within .rj-role {
+.rj-project:hover + .rj-role,
+.rj-project:focus-visible + .rj-role {
   opacity: 1;
   visibility: visible;
 }
