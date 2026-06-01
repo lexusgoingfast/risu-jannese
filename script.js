@@ -97,13 +97,19 @@ function initMediaFallbacks() {
 
 function initProjectModal() {
   const modal = document.getElementById('rj-project-modal');
+  const media = modal ? modal.querySelector('.rj-modal-media') : null;
   const triggers = document.querySelectorAll('[data-project-modal="gosha"]');
   if (!modal || triggers.length === 0) return;
 
   let activeTrigger = null;
+  let mediaResetTimer = null;
 
   const openModal = (trigger) => {
+    if (mediaResetTimer) window.clearTimeout(mediaResetTimer);
     activeTrigger = trigger;
+    if (media && !media.getAttribute('src')) {
+      media.setAttribute('src', media.dataset.src);
+    }
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
     document.body.classList.add('rj-modal-open');
@@ -113,8 +119,11 @@ function initProjectModal() {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('rj-modal-open');
-    if (activeTrigger) activeTrigger.focus();
+    if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
+    mediaResetTimer = window.setTimeout(() => {
+      if (media) media.removeAttribute('src');
+    }, 420);
   };
 
   triggers.forEach((trigger) => {

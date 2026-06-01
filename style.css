@@ -476,7 +476,7 @@ body {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 160ms ease, visibility 160ms ease;
+  transition: opacity 360ms ease, visibility 360ms ease;
 }
 
 .rj-modal.is-open {
@@ -488,16 +488,23 @@ body {
 .rj-modal-panel {
   width: min(1000px, calc(100vw - 48px));
   aspect-ratio: 1000 / 562.5;
-  padding: 24px 25px 25px;
+  padding: var(--gap-red);
   border: var(--rj-figma-border) solid var(--rj-border);
   background-color: var(--rj-bg);
+  opacity: 0;
+  transform: translateY(8px) scale(0.985);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+.rj-modal.is-open .rj-modal-panel {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .rj-modal-media {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
   border: var(--rj-figma-border) solid var(--rj-border);
 }
 
