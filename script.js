@@ -206,6 +206,7 @@ function initPhotoModal() {
   let activeTrigger = null;
   let activePhotos = [];
   let activeIndex = 0;
+  let mediaResetTimer = null;
 
   const renderPhoto = () => {
     const src = activePhotos[activeIndex];
@@ -222,6 +223,7 @@ function initPhotoModal() {
   };
 
   const openModal = (trigger) => {
+    if (mediaResetTimer) window.clearTimeout(mediaResetTimer);
     const gallery = PHOTO_GALLERIES[trigger.dataset.photoGallery] || [];
     if (gallery.length === 0) return;
     activeTrigger = trigger;
@@ -234,28 +236,21 @@ function initPhotoModal() {
   };
 
   const closeModal = () => {
+    if (!modal.classList.contains('is-open')) return;
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('rj-modal-open');
-    media.removeAttribute('src');
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
-    activePhotos = [];
-    activeIndex = 0;
+    mediaResetTimer = window.setTimeout(() => {
+      media.removeAttribute('src');
+      activePhotos = [];
+      activeIndex = 0;
+    }, 420);
   };
 
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openModal(trigger));
-  });
-
-  const setNavCursor = (button, event) => {
-    const rect = button.getBoundingClientRect();
-    button.style.setProperty('--rj-photo-cursor-x', `${event.clientX - rect.left}px`);
-    button.style.setProperty('--rj-photo-cursor-y', `${event.clientY - rect.top}px`);
-  };
-
-  [prevButton, nextButton].forEach((button) => {
-    button.addEventListener('pointermove', (event) => setNavCursor(button, event));
   });
 
   prevButton.addEventListener('click', () => showPhoto(-1));

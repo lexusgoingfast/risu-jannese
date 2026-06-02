@@ -527,6 +527,7 @@ body {
   position: relative;
   width: fit-content;
   max-width: calc(100vw - 48px);
+  cursor: auto;
 }
 
 .rj-photo-modal-media {
@@ -551,7 +552,7 @@ body {
   color: var(--rj-bg);
   font: inherit;
   line-height: 1;
-  cursor: none;
+  cursor: auto !important;
   opacity: 0;
   transition: opacity 180ms ease;
 }
@@ -569,18 +570,6 @@ body {
 .rj-photo-nav:hover,
 .rj-photo-nav:focus-visible {
   opacity: 1;
-}
-
-.rj-photo-nav::after {
-  content: attr(data-label);
-  position: absolute;
-  left: var(--rj-photo-cursor-x, 50%);
-  top: var(--rj-photo-cursor-y, 50%);
-  padding: 2px 4px;
-  background-color: var(--rj-bg);
-  color: var(--rj-link);
-  pointer-events: none;
-  transform: translate(-50%, -50%);
 }
 
 .rj-modal-open {
