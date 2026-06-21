@@ -22,18 +22,20 @@ function fitPortfolioToViewport() {
   const portfolio = document.querySelector('.rj-portfolio');
   if (!portfolio) return;
 
-  const styles = window.getComputedStyle(root);
-  const designWidth = parseFloat(styles.getPropertyValue('--rj-design-width')) || portfolio.offsetWidth;
-  const designHeight = parseFloat(styles.getPropertyValue('--rj-design-height')) || portfolio.offsetHeight;
-  const sideGap = parseFloat(styles.getPropertyValue('--gap-red')) || 25;
   const isMobile = window.matchMedia('(max-width: 767px)').matches;
-  const availableWidth = isMobile
-    ? document.documentElement.clientWidth
-    : Math.max(0, document.documentElement.clientWidth - sideGap * 2);
-  const availableHeight = isMobile
-    ? Number.POSITIVE_INFINITY
-    : window.innerHeight;
-  const scale = Math.min(availableWidth / designWidth, availableHeight / designHeight, 1);
+  if (isMobile) {
+    root.style.setProperty('--rj-scale', '1');
+    return;
+  }
+
+  const styles = window.getComputedStyle(root);
+  const designWidth = parseFloat(styles.getPropertyValue('--rj-design-width')) || 1380;
+  const designHeight = parseFloat(styles.getPropertyValue('--rj-design-height')) || 982;
+  const scale = Math.min(
+    document.documentElement.clientWidth / designWidth,
+    window.innerHeight / designHeight,
+    1
+  );
 
   root.style.setProperty('--rj-scale', scale.toFixed(4));
 }
@@ -64,9 +66,11 @@ function initTimer() {
   if (document.documentElement.getAttribute('data-timer-running')) return true;
   document.documentElement.setAttribute('data-timer-running', 'true');
 
+  // January 16, 12:30 Moscow time — same instant worldwide.
+  const target = new Date('2027-01-16T12:30:00+03:00');
+
   const updateTimer = () => {
     const now = new Date();
-    const target = new Date(2027, 0, 16, 0, 0, 0, 0);
     const totalSeconds = Math.max(0, Math.floor((target.getTime() - now.getTime()) / 1000));
 
     const days = Math.floor(totalSeconds / 86400);

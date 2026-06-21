@@ -105,7 +105,7 @@
     --rj-text: #FFFFFF;
     --rj-link: #FF00AF;
     --rj-border: #632B8F;
-    --rj-role-color: #838C3A;
+    --rj-role-color: #CECECE;
     --rj-media-placeholder: #010102;
     --rj-project-hover-bg: #CECECE;
     --rj-project-hover-text: #010102;
@@ -140,6 +140,30 @@
 
 * {
   box-sizing: border-box;
+}
+
+/* Selection — stroke outline (revert to fill):
+::selection,
+::-moz-selection {
+  background-color: #CECECE;
+  color: #000000;
+}
+*/
+::selection {
+  background-color: transparent;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 0.85px #000000;
+}
+
+::-moz-selection {
+  background-color: transparent;
+  color: #000000;
+  text-shadow:
+    -0.85px 0 0 #000000,
+    0.85px 0 0 #000000,
+    0 -0.85px 0 #000000,
+    0 0.85px 0 #000000;
 }
 
 /* Preloader — a welcome line resolving out of blur in the center of the page.
@@ -281,8 +305,20 @@ body {
   gap: var(--gap-red);
   box-sizing: border-box;
   overflow: hidden;
-  transform: scale(var(--rj-scale));
-  transform-origin: center center;
+}
+
+@media (min-width: 768px) {
+  .rj-portfolio-shell {
+    width: calc(var(--rj-design-width) * var(--rj-scale));
+    height: calc(var(--rj-design-height) * var(--rj-scale));
+    flex: 0 0 auto;
+    overflow: hidden;
+  }
+
+  .rj-portfolio {
+    transform: scale(var(--rj-scale));
+    transform-origin: top left;
+  }
 }
 
 .rj-sidebar {
@@ -555,6 +591,19 @@ body {
   margin-top: -2px;
   margin-bottom: -2px;
   margin-right: calc(var(--gap-green) - 4px);
+}
+
+.rj-project::selection {
+  background-color: #CECECE;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  -webkit-text-stroke: 0 transparent;
+}
+
+.rj-project::-moz-selection {
+  background-color: #CECECE;
+  color: #000000;
+  text-shadow: none;
 }
 
 .rj-project-trigger {
@@ -976,6 +1025,12 @@ body {
     background-color: var(--rj-bg);
   }
 
+  .rj-portfolio-shell {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
   .rj-portfolio {
     position: relative;
     flex-direction: column;
@@ -983,7 +1038,7 @@ body {
     justify-content: flex-start;
     padding: var(--gap-green);
     gap: var(--gap-green);
-    transform-origin: top center;
+    transform: none;
   }
 
   .rj-content {
