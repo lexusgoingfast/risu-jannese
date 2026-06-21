@@ -69,10 +69,14 @@
   --blue: 6px;
 
   --rj-bg: #FEFFFF;
+  --rj-page-bg: #F3F3F3;
   --rj-text: #000000;
   --rj-link: #36237E;
   --rj-border: #E0E0E0;
   --rj-role-color: #B8B8B8;
+  --rj-media-placeholder: #F3F3F3;
+  --rj-project-hover-bg: #D71920;
+  --rj-project-hover-text: var(--rj-bg);
 
   /* Minimal scrollbar (matches borders / role gray) */
   --rj-scroll-thumb: #CDCDCD;
@@ -92,6 +96,22 @@
   --rj-scale: 1;
   --rj-trayma-scale: 1;
 
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rj-bg: #010102;
+    --rj-page-bg: #010102;
+    --rj-text: #FFFFFF;
+    --rj-link: #FF00AF;
+    --rj-border: #632B8F;
+    --rj-role-color: #838C3A;
+    --rj-media-placeholder: #010102;
+    --rj-project-hover-bg: #CECECE;
+    --rj-project-hover-text: #010102;
+    --rj-scroll-thumb: #632B8F;
+    --rj-scroll-thumb-hover: #8B5BA8;
+  }
 }
 
 @font-face {
@@ -122,12 +142,87 @@
   box-sizing: border-box;
 }
 
+/* Preloader — a welcome line resolving out of blur in the center of the page.
+   The layout frames stay visible; only the inner content is held back. */
+.rj-preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--gap-red);
+  pointer-events: none;
+}
+
+.rj-preloader-text {
+  margin: 0;
+  max-width: 90vw;
+  font-family: var(--rj-font-ui);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.25;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--rj-text);
+  -webkit-text-stroke: 0.5px var(--rj-text);
+  /* Stays permanently soft — just barely legible. */
+  filter: blur(1.6px);
+  opacity: 1;
+  transform: scale(1);
+  will-change: opacity;
+}
+
+.rj-preloader.is-hidden .rj-preloader-text {
+  opacity: 0;
+  transform: scale(1);
+  transition: opacity 800ms steps(13);
+}
+
+/* Hold the inner content back until load; the bordered frames remain.
+   Target the rendered leaves so nothing leaks through `display: contents`
+   wrappers (e.g. the mobile sidebar footer). */
+.rj-video-avatar,
+.rj-star-logo-link,
+.rj-contacts,
+.rj-header-logo,
+.rj-scroll {
+  transition: opacity 700ms steps(11);
+}
+
+html.rj-preloading .rj-video-avatar,
+html.rj-preloading .rj-star-logo-link,
+html.rj-preloading .rj-contacts,
+html.rj-preloading .rj-header-logo,
+html.rj-preloading .rj-scroll {
+  opacity: 0;
+}
+
+/* During preload it's just a plain white box — no internal frame borders. */
+.rj-sidebar,
+.rj-content {
+  transition: border-color 700ms steps(11);
+}
+
+html.rj-preloading .rj-sidebar,
+html.rj-preloading .rj-content {
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rj-preloader-text {
+    transform: none;
+  }
+}
+
 html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100vh;
-  background-color: #F3F3F3;
+  color-scheme: light dark;
+  background-color: var(--rj-page-bg);
 }
 
 body {
@@ -136,7 +231,7 @@ body {
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-color: #F3F3F3;
+  background-color: var(--rj-page-bg);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -209,11 +304,25 @@ body {
   object-position: center;
   margin-bottom: var(--gap-red);
   border: var(--rj-figma-border) solid var(--rj-border);
-  background-color: #F3F3F3;
+  background-color: var(--rj-media-placeholder);
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
   -webkit-user-select: none;
+}
+
+.rj-video-avatar--dark {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rj-video-avatar--light {
+    display: none;
+  }
+
+  .rj-video-avatar--dark {
+    display: block;
+  }
 }
 
 .rj-sidebar-footer {
@@ -226,6 +335,11 @@ body {
   display: block;
   width: 60px;
   margin-bottom: var(--gap-green);
+}
+
+.rj-star-logo-link picture {
+  display: block;
+  width: 100%;
 }
 
 .rj-star-logo {
@@ -272,6 +386,12 @@ body {
   user-select: none;
   -webkit-user-drag: none;
   -webkit-user-select: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rj-header-logo {
+    filter: invert(1);
+  }
 }
 
 /* The work area follows the Figma frame: bio, always-expanded video work,
@@ -324,6 +444,18 @@ body {
   display: flex;
   flex-direction: column;
   overflow: visible;
+}
+
+.rj-category-ellipsis {
+  margin: var(--gap-blue) 0 0;
+  color: var(--rj-link);
+  font-family: var(--rj-font-ui);
+  font-size: var(--rj-figma-text);
+  line-height: normal;
+}
+
+.rj-category:has(.rj-category-ellipsis) .rj-year-block {
+  margin-bottom: 0;
 }
 
 .rj-category-title {
@@ -438,8 +570,8 @@ body {
 
 .rj-project:hover,
 .rj-project:focus-visible {
-  background-color: #D71920;
-  color: var(--rj-bg);
+  background-color: var(--rj-project-hover-bg);
+  color: var(--rj-project-hover-text);
 }
 
 .rj-role {
@@ -458,7 +590,7 @@ body {
 /* Neutral placeholders while real media is dropped in */
 .rj-media-missing {
   position: relative;
-  background-color: #F3F3F3;
+  background-color: var(--rj-media-placeholder);
 }
 
 .rj-profile-pic.rj-media-missing {
@@ -479,6 +611,11 @@ body {
 }
 
 .rj-modal {
+  --rj-modal-duration: 640ms;
+  --rj-modal-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --rj-modal-scrim-delay: 0ms;
+  --rj-modal-blur-delay: 140ms;
+  --rj-modal-panel-delay: 90ms;
   position: fixed;
   inset: 0;
   z-index: 50;
@@ -486,33 +623,115 @@ body {
   align-items: center;
   justify-content: center;
   padding: var(--gap-red);
-  background:
-    radial-gradient(circle at center, rgba(149, 149, 149, 0.8) 0%, rgba(75, 75, 75, 0.72) 42%, rgba(0, 0, 0, 0.78) 100%);
-  opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 360ms ease, visibility 360ms ease;
+  transition: visibility 0s linear 820ms;
+}
+
+/* Soft frosted tint — fades in first, no backdrop-filter jank. */
+.rj-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0) 24%,
+    rgba(255, 255, 255, 0.28) 62%,
+    rgba(255, 255, 255, 0.52) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--rj-modal-duration) var(--rj-modal-ease) var(--rj-modal-scrim-delay);
+  pointer-events: none;
+}
+
+/* Blur layer — delayed, longer fade so blur never pops in abruptly. */
+.rj-modal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  mask: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 22%, rgba(0, 0, 0, 0.45) 52%, rgba(0, 0, 0, 1) 78%);
+  -webkit-mask: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 22%, rgba(0, 0, 0, 0.45) 52%, rgba(0, 0, 0, 1) 78%);
+  opacity: 0;
+  transition: opacity 820ms var(--rj-modal-ease);
+  pointer-events: none;
+}
+
+.rj-modal.is-open::before {
+  opacity: 1;
+}
+
+.rj-modal.is-open::after {
+  opacity: 1;
+  transition-delay: var(--rj-modal-blur-delay);
+}
+
+/* On desktop the sheet is centered with gray margins — clip both scrim layers to the sheet. */
+@media (min-width: 768px) {
+  .rj-modal::before,
+  .rj-modal::after {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--rj-design-width) * var(--rj-scale));
+    height: calc(var(--rj-design-height) * var(--rj-scale));
+    transform: translate(-50%, -50%);
+  }
+}
+
+.rj-modal-close {
+  position: absolute;
+  top: var(--gap-red);
+  right: var(--gap-red);
+  z-index: 3;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 6px;
+  font-family: var(--rj-font-ui);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--rj-text);
+  opacity: 0;
+  transition: opacity var(--rj-modal-duration) var(--rj-modal-ease);
+}
+
+.rj-modal-close:hover {
+  opacity: 1;
 }
 
 .rj-modal.is-open {
-  opacity: 1;
   visibility: visible;
   pointer-events: auto;
+  transition: visibility 0s;
+}
+
+.rj-modal.is-open .rj-modal-close {
+  opacity: 0.7;
+  transition-delay: var(--rj-modal-panel-delay);
 }
 
 .rj-modal-panel {
+  position: relative;
+  z-index: 2;
   width: min(960px, calc(100vw - 48px));
-  padding: var(--gap-green);
-  border: var(--rj-figma-border) solid var(--rj-border);
-  background-color: var(--rj-bg);
+  padding: 0;
+  border: 0;
+  background-color: transparent;
   opacity: 0;
-  transform: translateY(8px) scale(0.985);
-  transition: opacity 420ms ease, transform 420ms ease;
+  transform: translate3d(0, 12px, 0) scale(0.986);
+  transition:
+    opacity var(--rj-modal-duration) var(--rj-modal-ease),
+    transform var(--rj-modal-duration) var(--rj-modal-ease);
 }
 
 .rj-modal.is-open .rj-modal-panel {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
+  transition-delay: var(--rj-modal-panel-delay);
 }
 
 .rj-modal-media {
@@ -533,8 +752,8 @@ body {
 .rj-photo-modal-media {
   aspect-ratio: auto;
   width: auto;
-  height: min(72vh, calc((min(960px, calc(100vw - 48px)) - (var(--gap-green) * 2)) * 0.5625));
-  max-width: calc(100vw - 48px - var(--gap-green) - var(--gap-green));
+  height: min(72vh, calc(min(960px, calc(100vw - 48px)) * 0.5625));
+  max-width: min(960px, calc(100vw - 48px));
   object-fit: contain;
   user-select: none;
   -webkit-user-drag: none;
@@ -543,10 +762,10 @@ body {
 
 .rj-photo-nav {
   position: absolute;
-  top: var(--gap-green);
-  bottom: var(--gap-green);
+  top: 0;
+  bottom: 0;
   z-index: 2;
-  width: calc((100% - (var(--gap-green) * 2)) / 2);
+  width: 50%;
   border: 0;
   background: transparent;
   color: var(--rj-bg);
@@ -558,12 +777,12 @@ body {
 }
 
 .rj-photo-nav--prev {
-  left: var(--gap-green);
+  left: 0;
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
 }
 
 .rj-photo-nav--next {
-  right: var(--gap-green);
+  right: 0;
   background: linear-gradient(270deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
 }
 
@@ -574,6 +793,16 @@ body {
 
 .rj-modal-open {
   overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rj-modal,
+  .rj-modal::before,
+  .rj-modal::after,
+  .rj-modal-panel,
+  .rj-modal-close {
+    transition: none;
+  }
 }
 
 .rj-trayma-page {
@@ -876,7 +1105,7 @@ body {
 
   .rj-modal-panel {
     width: calc(100vw - var(--gap-red));
-    padding: var(--gap-green);
+    padding: 0;
   }
 
   .rj-photo-modal-panel {
@@ -885,16 +1114,16 @@ body {
   }
 
   .rj-photo-modal-media {
-    height: calc((100vw - var(--gap-red) - (var(--gap-green) * 2)) * 0.5625);
-    max-width: calc(100vw - var(--gap-red) - var(--gap-green) - var(--gap-green));
+    height: calc((100vw - var(--gap-red)) * 0.5625);
+    max-width: calc(100vw - var(--gap-red));
   }
 
   .rj-photo-nav--prev {
-    left: var(--gap-green);
+    left: 0;
   }
 
   .rj-photo-nav--next {
-    right: var(--gap-green);
+    right: 0;
   }
 
   .rj-time {

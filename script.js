@@ -106,10 +106,49 @@ function initMediaFallbacks() {
     if (img.complete && img.naturalWidth === 0) markMissing(img);
   });
 
-  const video = document.querySelector('.rj-video-avatar');
-  if (video) {
+  document.querySelectorAll('.rj-video-avatar').forEach((video) => {
     video.addEventListener('error', () => video.classList.add('rj-media-missing'));
-  }
+  });
+}
+
+function initThemeMedia() {
+  const lightVideo = document.querySelector('.rj-video-avatar--light');
+  const darkVideo = document.querySelector('.rj-video-avatar--dark');
+  if (!lightVideo || !darkVideo) return;
+
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  const sync = (isDark) => {
+    const active = isDark ? darkVideo : lightVideo;
+    const inactive = isDark ? lightVideo : darkVideo;
+    inactive.pause();
+    active.play().catch(() => {});
+  };
+
+  sync(mq.matches);
+  mq.addEventListener('change', (event) => sync(event.matches));
+}
+
+const RJ_MODAL_ANIM_MS = 820;
+
+function openModalAnimated(modal, onOpen) {
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('rj-modal-open');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      modal.classList.add('is-open');
+      if (onOpen) onOpen();
+    });
+  });
+}
+
+function closeModalAnimated(modal, onSettled) {
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('rj-modal-open');
+  window.setTimeout(() => {
+    if (onSettled) onSettled();
+  }, RJ_MODAL_ANIM_MS);
 }
 
 function initProjectModal() {
@@ -120,30 +159,32 @@ function initProjectModal() {
   if (!modal || !media || triggers.length === 0) return;
 
   let activeTrigger = null;
-  let mediaResetTimer = null;
 
   const openModal = (trigger) => {
-    if (mediaResetTimer) window.clearTimeout(mediaResetTimer);
     activeTrigger = trigger;
     const title = trigger.textContent.trim();
-    media.setAttribute('src', `https://www.youtube-nocookie.com/embed/${trigger.dataset.videoId}?rel=0`);
+    const videoSrc = `https://www.youtube-nocookie.com/embed/${trigger.dataset.videoId}?rel=0`;
+    media.removeAttribute('src');
     media.setAttribute('title', title);
     if (panel) panel.setAttribute('aria-label', title);
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('rj-modal-open');
+    openModalAnimated(modal, () => {
+      requestAnimationFrame(() => {
+        media.setAttribute('src', videoSrc);
+      });
+    });
   };
 
   const closeModal = () => {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('rj-modal-open');
+    if (!modal.classList.contains('is-open')) return;
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
-    mediaResetTimer = window.setTimeout(() => {
+    closeModalAnimated(modal, () => {
       media.removeAttribute('src');
-    }, 420);
+    });
   };
+
+  const closeButton = modal.querySelector('.rj-modal-close');
+  if (closeButton) closeButton.addEventListener('click', closeModal);
 
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openModal(trigger));
@@ -173,12 +214,12 @@ const PHOTO_GALLERIES = {
     'assets/photos/viperr-11.webp',
   ],
   india: [
-    'assets/photos/india-01.png',
-    'assets/photos/india-02.png',
-    'assets/photos/india-03.png',
-    'assets/photos/india-04.png',
-    'assets/photos/india-05.png',
-    'assets/photos/india-07.png',
+    'assets/photos/india-01.webp',
+    'assets/photos/india-02.webp',
+    'assets/photos/india-03.webp',
+    'assets/photos/india-04.webp',
+    'assets/photos/india-05.webp',
+    'assets/photos/india-07.webp',
     'assets/photos/india-08.webp',
     'assets/photos/india-09.webp',
     'assets/photos/india-10.webp',
@@ -206,7 +247,6 @@ function initPhotoModal() {
   let activeTrigger = null;
   let activePhotos = [];
   let activeIndex = 0;
-  let mediaResetTimer = null;
 
   const renderPhoto = () => {
     const src = activePhotos[activeIndex];
@@ -223,34 +263,47 @@ function initPhotoModal() {
   };
 
   const openModal = (trigger) => {
-    if (mediaResetTimer) window.clearTimeout(mediaResetTimer);
     const gallery = PHOTO_GALLERIES[trigger.dataset.photoGallery] || [];
     if (gallery.length === 0) return;
-    activeTrigger = trigger;
-    activePhotos = gallery;
-    activeIndex = 0;
-    renderPhoto();
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('rj-modal-open');
+
+    const beginOpen = () => {
+      activeTrigger = trigger;
+      activePhotos = gallery;
+      activeIndex = 0;
+      renderPhoto();
+      openModalAnimated(modal);
+    };
+
+    const preload = new Image();
+    preload.onload = beginOpen;
+    preload.onerror = beginOpen;
+    preload.src = gallery[0];
+    if (preload.complete) beginOpen();
   };
 
   const closeModal = () => {
     if (!modal.classList.contains('is-open')) return;
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('rj-modal-open');
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
-    mediaResetTimer = window.setTimeout(() => {
+    closeModalAnimated(modal, () => {
       media.removeAttribute('src');
       activePhotos = [];
       activeIndex = 0;
-    }, 420);
+    });
   };
 
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openModal(trigger));
+  });
+
+  const setNavCursor = (button, event) => {
+    const rect = button.getBoundingClientRect();
+    button.style.setProperty('--rj-photo-cursor-x', `${event.clientX - rect.left}px`);
+    button.style.setProperty('--rj-photo-cursor-y', `${event.clientY - rect.top}px`);
+  };
+
+  [prevButton, nextButton].forEach((button) => {
+    button.addEventListener('pointermove', (event) => setNavCursor(button, event));
   });
 
   prevButton.addEventListener('click', () => showPhoto(-1));
@@ -360,12 +413,44 @@ function initTraymaLogoTilt() {
   trayma.addEventListener('pointerleave', resetTextGroupLight);
 }
 
+function initPreloader() {
+  const overlay = document.getElementById('rj-preloader');
+  if (!overlay) return;
+
+  const start = performance.now();
+  const MIN_VISIBLE = 1700; // run the intro for 1.7s, then fade out into the site
+  let finished = false;
+
+  const reveal = () => {
+    if (finished) return;
+    finished = true;
+    const wait = Math.max(0, MIN_VISIBLE - (performance.now() - start));
+    window.setTimeout(() => {
+      overlay.classList.add('is-hidden');
+      document.documentElement.classList.remove('rj-preloading');
+      const cleanup = () => overlay.remove();
+      overlay.addEventListener('transitionend', cleanup, { once: true });
+      window.setTimeout(cleanup, 1100); // fallback if transitionend doesn't fire
+    }, wait);
+  };
+
+  if (document.readyState === 'complete') {
+    reveal();
+  } else {
+    window.addEventListener('load', reveal, { once: true });
+    window.setTimeout(reveal, 6000); // safety net if `load` never fires
+  }
+}
+
+initPreloader();
+
 document.addEventListener('DOMContentLoaded', () => {
   initWorkLists();
   fitPortfolioToViewport();
   fitTraymaToViewport();
   initTimer();
   initMediaFallbacks();
+  initThemeMedia();
   initProjectModal();
   initPhotoModal();
   initTraymaLogoTilt();

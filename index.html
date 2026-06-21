@@ -7,17 +7,28 @@
   <meta name="description" content="Risu Jannise — visual artist, director and cinematographer working with major music artists." />
   <link rel="icon" href="assets/favicon.png" type="image/png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
+  <meta name="theme-color" content="#FEFFFF" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#010102" media="(prefers-color-scheme: dark)" />
   <link rel="preload" href="assets/fonts/TTInterfaces-Regular.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="preload" href="assets/fonts/TTInterfaces-Medium.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="stylesheet" href="style.css" />
+  <script>document.documentElement.classList.add('rj-preloading');</script>
 </head>
 <body>
+  <div class="rj-preloader" id="rj-preloader" aria-hidden="true">
+    <p class="rj-preloader-text">Enjoy the world that I am building</p>
+  </div>
+
   <div class="rj-portfolio">
     <aside class="rj-sidebar">
-      <video class="rj-video-avatar" src="assets/undo-relife.mp4" autoplay loop muted playsinline draggable="false"></video>
+      <video class="rj-video-avatar rj-video-avatar--light" src="assets/undo-relife.webm" autoplay loop muted playsinline draggable="false"></video>
+      <video class="rj-video-avatar rj-video-avatar--dark" src="assets/light2.webm" autoplay loop muted playsinline draggable="false"></video>
       <div class="rj-sidebar-footer">
         <a class="rj-star-logo-link" href="trayma.html" aria-label="Open TRAYMA page">
-          <img class="rj-star-logo" src="assets/tr-white.svg" alt="TRAUMA logo" />
+          <picture>
+            <source srcset="assets/tr-dark.webp" media="(prefers-color-scheme: dark)" type="image/webp" />
+            <img class="rj-star-logo" src="assets/tr-white.svg" alt="TRAUMA logo" />
+          </picture>
         </a>
         <div class="rj-contacts">
           <a href="https://instagram.com/risujannise" target="_blank" rel="noopener noreferrer">Life thru his eyes</a>
@@ -32,7 +43,10 @@
 
       <div class="rj-scroll">
       <div class="rj-bio">
-        <img class="rj-profile-pic" src="assets/img_0326.jpg" alt="Risu Jannise portrait" />
+        <picture>
+          <source srcset="assets/img_0326-dark.webp" media="(prefers-color-scheme: dark)" type="image/webp" />
+          <img class="rj-profile-pic" src="assets/img_0326.webp" alt="Risu Jannise portrait" />
+        </picture>
         <p><strong>Risu Jannise</strong> is a visual artist working with major music artists, where he takes on the full production cycle: from directing and cinematography to editing and color grading — or works as a precise specialist wherever needed.</p>
         <p>Starting from his first edit reels in 2017 and debut music video in 2021, today he is expanding his vision and scope — art direction and deep engagement in the creative environment in collaboration with other artists.</p>
         <p>He works on a permanent basis with <strong>9mice</strong>. Among other names he has worked with — <strong>Egor Kreed</strong>, <strong>Anikv</strong>, <strong>madk1d</strong> and <strong>Nettspend</strong> and others.</p>
@@ -94,6 +108,7 @@
             <div class="rj-work-item"><button class="rj-project rj-project-trigger" type="button" data-photo-gallery="viperr">VIPERR X LIFEISWAR</button></div>
           </div>
         </div>
+        <p class="rj-category-ellipsis" aria-hidden="true">...</p>
       </div>
 
       </div>
@@ -101,6 +116,7 @@
   </div>
 
   <div class="rj-modal" id="rj-project-modal" aria-hidden="true">
+    <button class="rj-modal-close" type="button" aria-label="Close">×</button>
     <div class="rj-modal-panel" role="dialog" aria-modal="true" aria-label="Project video">
       <iframe
         class="rj-modal-media"
@@ -122,3 +138,4 @@
   <script src="script.js"></script>
 </body>
 </html>
+
