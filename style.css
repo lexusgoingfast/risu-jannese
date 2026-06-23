@@ -371,17 +371,27 @@ body {
   display: block;
   width: 60px;
   margin-bottom: var(--gap-green);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 .rj-star-logo-link picture {
   display: block;
   width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 .rj-star-logo {
   display: block;
   width: 100%;
   height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .rj-contacts {

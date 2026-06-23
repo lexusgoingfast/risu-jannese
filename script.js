@@ -104,6 +104,13 @@ function markMissing(img) {
   img.src = BLANK_PIXEL;
 }
 
+function initStarLogoProtection() {
+  document.querySelectorAll('.rj-star-logo-link').forEach((link) => {
+    link.addEventListener('dragstart', (event) => event.preventDefault());
+    link.addEventListener('contextmenu', (event) => event.preventDefault());
+  });
+}
+
 function initMediaFallbacks() {
   document.querySelectorAll('.rj-profile-pic, .rj-star-logo').forEach((img) => {
     img.addEventListener('error', () => markMissing(img));
@@ -460,6 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
   fitTraymaToViewport();
   initTimer();
   initMediaFallbacks();
+  initStarLogoProtection();
   initThemeMedia();
   initProjectModal();
   initPhotoModal();
