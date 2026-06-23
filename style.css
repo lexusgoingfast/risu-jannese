@@ -686,7 +686,7 @@ body {
 .rj-artist-works-group:not([hidden]) {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-blue);
+  gap: 10px;
 }
 
 .rj-artist-works-group[hidden] {
@@ -697,7 +697,7 @@ body {
 .rj-work {
   display: flex;
   align-items: baseline;
-  gap: var(--gap-green);
+  gap: 0;
 }
 
 .rj-artist {
@@ -705,22 +705,41 @@ body {
   transition: opacity 180ms ease;
 }
 
-.rj-projects.is-exploring .rj-artist:not(.is-active) {
+.rj-projects.is-pinned .rj-artist:not(.is-active) {
   opacity: 0.35;
 }
 
 .rj-artist-index,
 .rj-work-index {
   flex: 0 0 auto;
-  min-width: 2.4ch;
-  color: var(--rj-text);
-  opacity: 0.55;
+  color: #000000;
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
 
+/* Figma node 6:186 — index at x≈639, name at x≈728 (≈89px column) */
+.rj-artist-index {
+  min-width: 5.5625em;
+}
+
+/* Figma — work index at x≈953, title at x≈1057 (≈103px column) */
 .rj-work-index {
-  min-width: 3.4ch;
+  min-width: 6.46em;
+}
+
+@media (prefers-color-scheme: dark) {
+  .rj-artist-index,
+  .rj-work-index {
+    color: var(--rj-text);
+  }
+}
+
+html.rj-projects-scroll-locked body {
+  position: fixed;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  width: 100%;
 }
 
 .rj-artist-name {

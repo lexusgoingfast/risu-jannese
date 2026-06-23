@@ -183,49 +183,78 @@ function initProjectsExplorer() {
   });
 
   let pinnedKey = null;
+  let previewKey = null;
+  let scrollLockY = 0;
 
-  const setActive = (key) => {
-    root.classList.add('is-exploring');
-    itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === key));
-    groupByKey.forEach((group, k) => { group.hidden = k !== key; });
+  const lockScroll = () => {
+    scrollLockY = window.scrollY;
+    document.documentElement.classList.add('rj-projects-scroll-locked');
+    document.body.style.top = `-${scrollLockY}px`;
   };
 
-  const clearActive = () => {
-    root.classList.remove('is-exploring');
-    itemByKey.forEach((item) => item.classList.remove('is-active'));
-    groupByKey.forEach((group) => { group.hidden = true; });
+  const unlockScroll = () => {
+    document.documentElement.classList.remove('rj-projects-scroll-locked');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollLockY);
   };
 
-  const restore = () => {
-    if (pinnedKey) setActive(pinnedKey);
-    else clearActive();
+  const render = () => {
+    const activeKey = pinnedKey || previewKey;
+
+    root.classList.toggle('is-pinned', Boolean(pinnedKey));
+
+    itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === activeKey));
+    groupByKey.forEach((group, k) => { group.hidden = k !== activeKey; });
+  };
+
+  const clearPinned = () => {
+    if (!pinnedKey && !previewKey) return;
+    pinnedKey = null;
+    previewKey = null;
+    unlockScroll();
+    render();
+  };
+
+  const clearPreview = () => {
+    previewKey = null;
+    if (!pinnedKey) render();
   };
 
   itemByKey.forEach((item, key) => {
     const nameBtn = item.querySelector('.rj-artist-name');
 
     if (!isTouchLike) {
-      item.addEventListener('mouseenter', () => setActive(key));
-      nameBtn.addEventListener('focus', () => setActive(key));
+      item.addEventListener('mouseenter', () => {
+        if (pinnedKey) return;
+        previewKey = key;
+        render();
+      });
     }
 
     nameBtn.addEventListener('click', () => {
       if (pinnedKey === key) {
-        pinnedKey = null;
-        if (isTouchLike) clearActive();
-        else setActive(key);
-      } else {
-        pinnedKey = key;
-        setActive(key);
+        clearPinned();
+        return;
       }
+
+      pinnedKey = key;
+      previewKey = key;
+      lockScroll();
+      render();
     });
   });
 
+  document.addEventListener('click', (event) => {
+    if (!pinnedKey) return;
+    if (event.target.closest('.rj-artist-name')) return;
+    clearPinned();
+  });
+
   if (!isTouchLike) {
-    root.addEventListener('mouseleave', restore);
+    root.addEventListener('mouseleave', clearPreview);
     root.addEventListener('focusout', (event) => {
-      if (root.contains(event.relatedTarget)) return;
-      restore();
+      if (pinnedKey || root.contains(event.relatedTarget)) return;
+      clearPreview();
     });
   }
 }
