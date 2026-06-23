@@ -328,33 +328,35 @@ function initPhotoModal() {
 function initTraymaLogoTilt() {
   const trayma = document.querySelector('.rj-trayma');
   const mark = document.querySelector('.rj-trayma-mark');
+  const markLight = mark ? mark.querySelector('.rj-trayma-mark-img--light') : null;
   const lightTargets = document.querySelectorAll('.rj-trayma-title, .rj-trayma-subtitle');
-  if (!trayma || !mark || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!trayma || !mark || !markLight || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let frameId = null;
   const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
   const isTouchLike = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 
+  const isPointInRect = (x, y, rect) =>
+    x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+
   const setMarkLight = (event) => {
     const rect = mark.getBoundingClientRect();
+    if (!isPointInRect(event.clientX, event.clientY, rect)) {
+      mark.classList.remove('is-light-active');
+      return;
+    }
+
     const x = clamp((event.clientX - rect.left) / rect.width, 0, 1);
     const y = clamp((event.clientY - rect.top) / rect.height, 0, 1);
     const lightX = (x * 100).toFixed(2);
     const lightY = (y * 100).toFixed(2);
 
-    if (frameId) window.cancelAnimationFrame(frameId);
-    frameId = window.requestAnimationFrame(() => {
-      mark.classList.add('is-light-active');
-      if (isTouchLike) {
-        lightTargets.forEach((target) => target.classList.add('is-light-hinted'));
-      }
-      mark.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
-      mark.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
-    });
+    mark.classList.add('is-light-active');
+    markLight.style.setProperty('--rj-trayma-light-x', `${lightX}%`);
+    markLight.style.setProperty('--rj-trayma-light-y', `${lightY}%`);
   };
 
-  const resetTilt = () => {
-    if (frameId) window.cancelAnimationFrame(frameId);
+  const resetMarkLight = () => {
     mark.classList.remove('is-light-active');
     lightTargets.forEach((target) => target.classList.remove('is-light-hinted'));
   };
@@ -369,15 +371,9 @@ function initTraymaLogoTilt() {
     };
   };
 
-  const setTextGroupLight = (event, constrainToTextGroup = true) => {
+  const setTextGroupLight = (event) => {
     const rect = getTextGroupRect();
-    const isInTextGroup =
-      event.clientX >= rect.left &&
-      event.clientX <= rect.right &&
-      event.clientY >= rect.top &&
-      event.clientY <= rect.bottom;
-
-    if (constrainToTextGroup && !isInTextGroup) {
+    if (!isPointInRect(event.clientX, event.clientY, rect)) {
       lightTargets.forEach((target) => target.classList.remove('is-light-active'));
       return;
     }
@@ -397,24 +393,34 @@ function initTraymaLogoTilt() {
     lightTargets.forEach((target) => target.classList.remove('is-light-active'));
   };
 
+  const updateTraymaLight = (event) => {
+    if (frameId) window.cancelAnimationFrame(frameId);
+    frameId = window.requestAnimationFrame(() => {
+      setMarkLight(event);
+      setTextGroupLight(event);
+      if (isTouchLike) {
+        lightTargets.forEach((target) => target.classList.add('is-light-hinted'));
+      }
+    });
+  };
+
+  const resetTraymaLight = () => {
+    if (frameId) window.cancelAnimationFrame(frameId);
+    resetMarkLight();
+    resetTextGroupLight();
+  };
+
   if (isTouchLike) {
-    mark.addEventListener('pointerdown', setMarkLight);
-    mark.addEventListener('pointermove', setMarkLight);
-    mark.addEventListener('pointerup', resetTilt);
-    mark.addEventListener('pointercancel', resetTilt);
-    mark.addEventListener('pointerleave', resetTilt);
-    trayma.addEventListener('pointerdown', (event) => setTextGroupLight(event));
-    trayma.addEventListener('pointermove', (event) => setTextGroupLight(event));
-    trayma.addEventListener('pointerup', resetTextGroupLight);
-    trayma.addEventListener('pointercancel', resetTextGroupLight);
-    trayma.addEventListener('pointerleave', resetTextGroupLight);
+    trayma.addEventListener('pointerdown', updateTraymaLight);
+    trayma.addEventListener('pointermove', updateTraymaLight);
+    trayma.addEventListener('pointerup', resetTraymaLight);
+    trayma.addEventListener('pointercancel', resetTraymaLight);
+    trayma.addEventListener('pointerleave', resetTraymaLight);
     return;
   }
 
-  mark.addEventListener('pointermove', setMarkLight);
-  mark.addEventListener('pointerleave', resetTilt);
-  trayma.addEventListener('pointermove', (event) => setTextGroupLight(event));
-  trayma.addEventListener('pointerleave', resetTextGroupLight);
+  trayma.addEventListener('pointermove', updateTraymaLight);
+  trayma.addEventListener('pointerleave', resetTraymaLight);
 }
 
 function initPreloader() {

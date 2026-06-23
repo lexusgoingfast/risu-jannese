@@ -992,9 +992,14 @@ body {
   --rj-trayma-bg: #000000;
   --rj-trayma-ink: #222222;
   --rj-trayma-ink-end: #393939;
-  --rj-trayma-mark-opacity: 0.14;
+  --rj-trayma-mark-width: 266px;
+  --rj-trayma-mark-height: 307px;
+  --rj-trayma-mark-y: calc(50% - 50.02px);
+  --rj-trayma-mark-opacity: 0;
   --rj-trayma-mark-gradient: linear-gradient(to bottom left, #FFFFFF 0%, var(--rj-trayma-ink-end) 100%);
-  --rj-trayma-text-gradient: linear-gradient(180deg, var(--rj-trayma-ink) 0%, var(--rj-trayma-ink-end) 100%);
+  --rj-trayma-light-active-opacity: 0.28;
+  --rj-trayma-text-light-active-opacity: 0.31;
+  --rj-trayma-text-light-hint-opacity: 0.06;
   --rj-trayma-time-color: #FFFFFF;
   background-color: var(--rj-trayma-bg);
   color: var(--rj-trayma-time-color);
@@ -1015,14 +1020,15 @@ body {
 
 .rj-trayma-mark {
   position: absolute;
-  top: calc(50% - 136.39px);
+  top: var(--rj-trayma-mark-y);
   left: 50%;
-  width: 324.213px;
-  height: 374.373px;
+  width: var(--rj-trayma-mark-width);
+  height: var(--rj-trayma-mark-height);
   transform: translate(-50%, -50%);
   transform-style: flat;
   transition: none;
   will-change: auto;
+  pointer-events: none;
 }
 
 .rj-trayma-mark-img {
@@ -1031,16 +1037,23 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 .rj-trayma-mark-img--light {
-  background:
-    radial-gradient(circle at var(--rj-trayma-light-x, 50%) var(--rj-trayma-light-y, 42%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, var(--rj-trayma-ink-end) 82%);
+  background: radial-gradient(
+    circle at var(--rj-trayma-light-x, 50%) var(--rj-trayma-light-y, 42%),
+    #B8B8B8 0%,
+    #8A8A8A 18%,
+    #505050 40%,
+    var(--rj-trayma-ink-end) 56%,
+    transparent 72%
+  );
   mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   opacity: 0;
   z-index: 2;
-  transition: opacity 620ms ease, background 180ms ease;
+  transition: opacity 280ms ease, background 60ms linear;
 }
 
 .rj-trayma-mark-img--base {
@@ -1049,49 +1062,43 @@ body {
   -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   opacity: var(--rj-trayma-mark-opacity);
   z-index: 1;
-  transition: opacity 620ms ease;
+  transition: opacity 280ms ease;
 }
 
 .rj-trayma-mark.is-light-active .rj-trayma-mark-img--light {
-  opacity: 1;
+  opacity: var(--rj-trayma-light-active-opacity);
 }
 
 .rj-trayma-title {
   position: absolute;
-  top: 576.13px;
+  top: calc(var(--rj-trayma-mark-y) + (var(--rj-trayma-mark-height) / 2) + 24px);
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  background: var(--rj-trayma-text-gradient);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--rj-trayma-bg);
   font-family: 'Times New Roman', Times, serif;
-  font-size: 100px;
+  font-size: 54.281px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: var(--rj-trayma-bg);
 }
 
 .rj-trayma-subtitle {
   position: absolute;
-  top: 687.63px;
+  top: calc(var(--rj-trayma-mark-y) + (var(--rj-trayma-mark-height) / 2) + 82px);
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  background: var(--rj-trayma-text-gradient);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: var(--rj-trayma-bg);
   font-family: 'Times New Roman', Times, serif;
-  font-size: 25px;
+  font-size: 13.57px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: var(--rj-trayma-bg);
 }
 
 .rj-trayma-title::after,
@@ -1099,14 +1106,20 @@ body {
   content: attr(data-text);
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, var(--rj-trayma-ink-end) 82%);
+  background: radial-gradient(
+    circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%),
+    #B8B8B8 0%,
+    #8A8A8A 18%,
+    #505050 40%,
+    var(--rj-trayma-ink-end) 56%,
+    transparent 72%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 620ms ease, background 180ms ease;
+  transition: opacity 280ms ease, background 60ms linear;
   -webkit-text-fill-color: transparent;
 }
 
@@ -1114,12 +1127,12 @@ body {
 .rj-trayma-subtitle.is-light-hinted::after {
   --rj-trayma-text-light-x: 50%;
   --rj-trayma-text-light-y: 45%;
-  opacity: 0.16;
+  opacity: var(--rj-trayma-text-light-hint-opacity);
 }
 
 .rj-trayma-title.is-light-active::after,
 .rj-trayma-subtitle.is-light-active::after {
-  opacity: 1;
+  opacity: var(--rj-trayma-text-light-active-opacity);
 }
 
 .rj-trayma-time {
@@ -1356,9 +1369,9 @@ body {
   .rj-trayma {
     width: 100vw;
     height: 100dvh;
-    --rj-trayma-mobile-mark: clamp(148px, 46vw, 190px);
+    --rj-trayma-mobile-mark: clamp(96px, 29vw, 122px);
     --rj-trayma-mobile-mark-height: calc(var(--rj-trayma-mobile-mark) * 1.1547);
-    --rj-trayma-mobile-center-y: clamp(250px, 41dvh, 350px);
+    --rj-trayma-mobile-center-y: clamp(230px, 38dvh, 320px);
     touch-action: none;
     transform: none;
   }
@@ -1371,14 +1384,14 @@ body {
   }
 
   .rj-trayma-title {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(26px, 4dvh, 34px));
-    font-size: clamp(44px, 14.2vw, 62px);
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(14px, 2.5dvh, 22px));
+    font-size: clamp(22px, 8.5vw, 36px);
     line-height: 0.82;
   }
 
   .rj-trayma-subtitle {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(78px, 13dvh, 96px));
-    font-size: clamp(11px, 3.5vw, 15px);
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(48px, 8dvh, 58px));
+    font-size: clamp(9px, 3.2vw, 13.5px);
     line-height: 1;
   }
 
@@ -1390,18 +1403,18 @@ body {
 
 @media (max-width: 767px) and (max-height: 720px) {
   .rj-trayma {
-    --rj-trayma-mobile-mark: clamp(128px, 40vw, 166px);
-    --rj-trayma-mobile-center-y: clamp(210px, 38dvh, 270px);
+    --rj-trayma-mobile-mark: clamp(86px, 26vw, 108px);
+    --rj-trayma-mobile-center-y: clamp(200px, 36dvh, 260px);
   }
 
   .rj-trayma-title {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 22px);
-    font-size: clamp(38px, 12vw, 50px);
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 12px);
+    font-size: clamp(20px, 7.6vw, 30px);
   }
 
   .rj-trayma-subtitle {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 64px);
-    font-size: clamp(10px, 3.1vw, 12.5px);
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 44px);
+    font-size: clamp(8.5px, 2.9vw, 12px);
   }
 
   .rj-trayma-time-mobile {
