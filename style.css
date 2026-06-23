@@ -876,8 +876,8 @@ body {
 
 .rj-video-modal-close {
   position: absolute;
-  top: 37px;
-  right: max(25px, calc((100vw - 1440px) / 2 + 245px));
+  top: max(var(--gap-green), calc((100vh - var(--rj-design-height) * var(--rj-scale)) / 2 + 37.78px * var(--rj-scale)));
+  right: max(var(--gap-green), calc((100vw - var(--rj-design-width) * var(--rj-scale)) / 2 + 37.504px * var(--rj-scale)));
   z-index: 3;
   appearance: none;
   border: 0;
