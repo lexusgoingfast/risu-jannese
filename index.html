@@ -117,15 +117,20 @@
   </div>
   </div>
 
-  <div class="rj-modal" id="rj-project-modal" aria-hidden="true">
-    <button class="rj-modal-close" type="button" aria-label="Close">×</button>
-    <div class="rj-modal-panel" role="dialog" aria-modal="true" aria-label="Project video">
-      <iframe
-        class="rj-modal-media"
-        title="Project video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>
+  <div class="rj-modal rj-video-modal" id="rj-project-modal" aria-hidden="true">
+    <div class="rj-video-modal-scrim" aria-hidden="true"></div>
+    <button class="rj-video-modal-close" type="button" aria-label="Close">
+      <img src="assets/modal/close.svg" alt="" width="19" height="20" draggable="false" />
+    </button>
+    <div class="rj-modal-panel rj-video-modal-panel" role="dialog" aria-modal="true" aria-label="Project video">
+      <div class="rj-video-modal-frame">
+        <iframe
+          class="rj-modal-media rj-video-modal-media"
+          title="Project video"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
     </div>
   </div>
 

@@ -187,7 +187,7 @@ function initProjectModal() {
     });
   };
 
-  const closeButton = modal.querySelector('.rj-modal-close');
+  const closeButton = modal.querySelector('.rj-video-modal-close');
   if (closeButton) closeButton.addEventListener('click', closeModal);
 
   triggers.forEach((trigger) => {

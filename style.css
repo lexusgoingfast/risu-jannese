@@ -401,6 +401,19 @@ body {
   text-decoration: underline;
 }
 
+.rj-contacts a::selection {
+  background-color: #CECECE;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  -webkit-text-stroke: 0 transparent;
+}
+
+.rj-contacts a::-moz-selection {
+  background-color: #CECECE;
+  color: #000000;
+  text-shadow: none;
+}
+
 .rj-content {
   flex: 1;
   border: var(--rj-figma-border) solid var(--rj-border);
@@ -791,6 +804,123 @@ body {
   border: var(--rj-figma-border) solid var(--rj-border);
 }
 
+/* Video modal — Figma overlay (node 0:48) + player frame (nodes 0:49–0:51, 0:57) */
+#rj-project-modal::before,
+#rj-project-modal::after {
+  content: none;
+  display: none;
+}
+
+.rj-video-modal-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  backdrop-filter: blur(2.2px);
+  -webkit-backdrop-filter: blur(2.2px);
+  /* Figma node 0:48 — near-opaque white with a subtle radial falloff (1.0 → 0.95).
+     Ellipse: ~30% horizontal / 50% vertical radius, matching the frame's matrix. */
+  background: radial-gradient(
+    ellipse 30% 50% at 50% 50%,
+    rgba(255, 255, 255, 1) 79%,
+    rgba(255, 255, 255, 0.95) 100%
+  );
+  opacity: 0;
+  transition: opacity var(--rj-modal-duration) var(--rj-modal-ease) var(--rj-modal-scrim-delay);
+}
+
+#rj-project-modal.is-open .rj-video-modal-scrim {
+  opacity: 1;
+}
+
+/* Desktop: keep the scrim/blur confined to the white sheet so the gray
+   page margins on either side stay untouched. */
+@media (min-width: 768px) {
+  .rj-video-modal-scrim {
+    inset: auto;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--rj-design-width) * var(--rj-scale));
+    height: calc(var(--rj-design-height) * var(--rj-scale));
+    transform: translate(-50%, -50%);
+  }
+}
+
+#rj-project-modal .rj-video-modal-panel {
+  position: relative;
+  z-index: 2;
+  width: min(994.54px, calc(100vw - 48px));
+  padding: 0;
+}
+
+#rj-project-modal .rj-video-modal-frame {
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 994.54 / 556.58;
+  height: auto;
+  border: var(--rj-figma-border) solid var(--rj-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11.7px 12px;
+}
+
+#rj-project-modal .rj-video-modal-media {
+  display: block;
+  width: 100%;
+  max-width: 970.54px;
+  aspect-ratio: 970.54 / 533.178;
+  height: auto;
+  border: var(--rj-figma-border) solid var(--rj-border);
+}
+
+.rj-video-modal-close {
+  position: absolute;
+  top: 37px;
+  right: max(25px, calc((100vw - 1440px) / 2 + 245px));
+  z-index: 3;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  line-height: 0;
+  cursor: pointer;
+  color: #36237E;
+  opacity: 0;
+  transition: opacity var(--rj-modal-duration) var(--rj-modal-ease);
+}
+
+.rj-video-modal-close img {
+  display: block;
+  width: 19px;
+  height: 20px;
+}
+
+.rj-video-modal-close:hover {
+  opacity: 1;
+}
+
+#rj-project-modal.is-open .rj-video-modal-close {
+  opacity: 1;
+  transition-delay: var(--rj-modal-panel-delay);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rj-video-modal-scrim {
+    /* Dark-theme mirror of Figma node 0:48 — near-opaque dark, same radial falloff. */
+    background: radial-gradient(
+      ellipse 30% 50% at 50% 50%,
+      rgba(1, 1, 2, 1) 79%,
+      rgba(1, 1, 2, 0.95) 100%
+    );
+  }
+
+  .rj-video-modal-close {
+    color: var(--rj-link);
+  }
+}
+
 .rj-photo-modal-panel {
   position: relative;
   width: fit-content;
@@ -849,7 +979,8 @@ body {
   .rj-modal::before,
   .rj-modal::after,
   .rj-modal-panel,
-  .rj-modal-close {
+  .rj-modal-close,
+  .rj-video-modal-close {
     transition: none;
   }
 }
@@ -1161,6 +1292,21 @@ body {
   .rj-modal-panel {
     width: calc(100vw - var(--gap-red));
     padding: 0;
+  }
+
+  #rj-project-modal .rj-video-modal-panel {
+    width: calc(100vw - var(--gap-red));
+  }
+
+  #rj-project-modal .rj-video-modal-frame {
+    height: auto;
+    min-height: 0;
+    padding: 8px;
+  }
+
+  .rj-video-modal-close {
+    top: var(--gap-green);
+    right: var(--gap-green);
   }
 
   .rj-photo-modal-panel {
