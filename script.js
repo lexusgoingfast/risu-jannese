@@ -224,10 +224,18 @@ function initProjectsExplorer() {
     const nameBtn = item.querySelector('.rj-artist-name');
 
     if (!isTouchLike) {
-      item.addEventListener('mouseenter', () => {
+      nameBtn.addEventListener('mouseenter', () => {
         if (pinnedKey) return;
         previewKey = key;
         render();
+      });
+
+      nameBtn.addEventListener('mouseleave', () => {
+        if (pinnedKey) return;
+        if (previewKey === key) {
+          previewKey = null;
+          render();
+        }
       });
     }
 

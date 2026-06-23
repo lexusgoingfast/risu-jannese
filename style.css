@@ -759,7 +759,7 @@ html.rj-projects-scroll-locked body {
 
 .rj-artist-name:hover,
 .rj-artist-name:focus-visible,
-.rj-artist.is-active .rj-artist-name {
+.rj-projects.is-pinned .rj-artist.is-active .rj-artist-name {
   background-color: var(--rj-project-hover-bg);
   color: var(--rj-project-hover-text);
 }
