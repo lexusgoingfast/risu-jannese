@@ -995,8 +995,8 @@ body {
   --rj-trayma-mark-width: 266px;
   --rj-trayma-mark-height: 307px;
   --rj-trayma-mark-y: calc(50% - 50.02px);
-  --rj-trayma-title-gap: 12px;
-  --rj-trayma-subtitle-gap: 62px;
+  --rj-trayma-copy-offset: 24px;
+  --rj-trayma-copy-gap: 4px;
   --rj-trayma-mark-opacity: 0;
   --rj-trayma-mark-gradient: linear-gradient(to bottom left, #FFFFFF 0%, var(--rj-trayma-ink-end) 100%);
   --rj-trayma-light-active-opacity: 0.28;
@@ -1071,11 +1071,19 @@ body {
   opacity: var(--rj-trayma-light-active-opacity);
 }
 
-.rj-trayma-title {
+.rj-trayma-copy {
   position: absolute;
-  top: calc(var(--rj-trayma-mark-y) + (var(--rj-trayma-mark-height) / 2) + var(--rj-trayma-title-gap));
+  top: calc(var(--rj-trayma-mark-y) + (var(--rj-trayma-mark-height) / 2) + var(--rj-trayma-copy-offset));
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rj-trayma-copy-gap);
+}
+
+.rj-trayma-title {
+  position: relative;
   margin: 0;
   color: var(--rj-trayma-bg);
   font-family: 'Times New Roman', Times, serif;
@@ -1088,10 +1096,7 @@ body {
 }
 
 .rj-trayma-subtitle {
-  position: absolute;
-  top: calc(var(--rj-trayma-mark-y) + (var(--rj-trayma-mark-height) / 2) + var(--rj-trayma-subtitle-gap));
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
   margin: 0;
   color: var(--rj-trayma-bg);
   font-family: 'Times New Roman', Times, serif;
@@ -1385,14 +1390,17 @@ body {
     aspect-ratio: 324.213 / 374.373;
   }
 
+  .rj-trayma-copy {
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 24px);
+    gap: 4px;
+  }
+
   .rj-trayma-title {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(8px, 1.6dvh, 14px));
     font-size: clamp(22px, 8.5vw, 36px);
     line-height: 0.82;
   }
 
   .rj-trayma-subtitle {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + clamp(38px, 6.5dvh, 46px));
     font-size: clamp(9px, 3.2vw, 13.5px);
     line-height: 1;
   }
@@ -1409,13 +1417,15 @@ body {
     --rj-trayma-mobile-center-y: clamp(200px, 36dvh, 260px);
   }
 
+  .rj-trayma-copy {
+    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 24px);
+  }
+
   .rj-trayma-title {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 8px);
     font-size: clamp(20px, 7.6vw, 30px);
   }
 
   .rj-trayma-subtitle {
-    top: calc(var(--rj-trayma-mobile-center-y) + (var(--rj-trayma-mobile-mark-height) * 0.5) + 36px);
     font-size: clamp(8.5px, 2.9vw, 12px);
   }
 
