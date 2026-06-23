@@ -60,6 +60,176 @@ function initWorkLists() {
   return true;
 }
 
+/* Source of truth for the artist explorer. One entry per work; the artist(s)
+   are parsed from the title (everything before the first spaced dash). */
+const RJ_PROJECTS = [
+  { title: '9mice – Do Vesni', videoId: 'Wb4-qaF7RAs' },
+  { title: '9mice, Егор Крид, тёмный принц, madk1d – Jealous', videoId: 'q4pVTvUOWJA' },
+  { title: '9mice – ГОША РУБЧИНСКИЙ', videoId: '9FfB-mhoy08' },
+  { title: '9mice – u+me', videoId: 'vQZY-0rws3w' },
+  { title: 'Nettspend – Tommy', videoId: 'nyMawpTaaG8' },
+  { title: 'Exvy, Fakov, FBS – Shhh', videoId: 'L-hu8_cRbVE' },
+  { title: 'madk1d – дырки в штанах', videoId: '3KVuiRBk5RI' },
+  { title: '9mice - SEOUL', videoId: '5X0HY_n77sU' },
+  { title: 'BRUNETTE – TRY', videoId: 'WblRgIwyWi4' },
+  { title: 'myspacemark - mannequin', videoId: '9YAbR-LkuAU' },
+  { title: 'gotlibgotlibgotlib — aromat', videoId: 'xnFAk-6Mt84' },
+  { title: 'Егор Крид – Море', videoId: 'qrU4xhBvMhc' },
+  { title: 'Элджей, Onative - MAC&CHEESE', videoId: 'wr6zDt-zV1w' },
+  { title: 'Foolboi Sasha - GOINGMYWAY', videoId: '0HIj_OZTm3Q' },
+  { title: 'Элджей, ANIKV - SPORT', videoId: 'TPP5agm13DI' },
+  { title: '9mice – RIOT MUZIK', videoId: 'yxc37RhrmxY' },
+  { title: 'India', photoGallery: 'india' },
+  { title: 'VIPERR X LIFEISWAR', photoGallery: 'viperr' },
+];
+
+// A dash flanked by spaces splits "Artist(s) – Project". Names like "u+me"
+// or "MAC&CHEESE" have no such dash and are left intact.
+const RJ_ARTIST_SEPARATOR = /\s[–—-]\s/;
+
+function rjBuildArtistIndex(projects) {
+  const map = new Map();
+  projects.forEach((project) => {
+    const match = project.title.match(RJ_ARTIST_SEPARATOR);
+    let artistsRaw;
+    let label;
+    if (match) {
+      artistsRaw = project.title.slice(0, match.index);
+      label = project.title.slice(match.index + match[0].length).trim();
+    } else {
+      artistsRaw = project.title;
+      label = project.title.trim();
+    }
+    const artists = artistsRaw
+      .split(',')
+      .map((name) => name.trim())
+      .filter(Boolean);
+    artists.forEach((name) => {
+      const key = name.toLocaleLowerCase('ru');
+      if (!map.has(key)) map.set(key, { key, name, works: [] });
+      map.get(key).works.push({
+        label,
+        videoId: project.videoId || null,
+        photoGallery: project.photoGallery || null,
+      });
+    });
+  });
+  return Array.from(map.values()).sort((a, b) =>
+    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+  );
+}
+
+function rjPad(value, size) {
+  return String(value).padStart(size, '0');
+}
+
+function initProjectsExplorer() {
+  const root = document.querySelector('.rj-projects');
+  if (!root) return;
+  const list = root.querySelector('.rj-artist-list');
+  const worksPanel = root.querySelector('.rj-artist-works');
+  if (!list || !worksPanel) return;
+
+  const artists = rjBuildArtistIndex(RJ_PROJECTS);
+  const isTouchLike = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  const itemByKey = new Map();
+  const groupByKey = new Map();
+
+  artists.forEach((artist, index) => {
+    const li = document.createElement('li');
+    li.className = 'rj-artist';
+    li.dataset.key = artist.key;
+
+    const idx = document.createElement('span');
+    idx.className = 'rj-artist-index';
+    idx.textContent = `${rjPad(index + 1, 2)}.`;
+
+    const nameBtn = document.createElement('button');
+    nameBtn.className = 'rj-artist-name';
+    nameBtn.type = 'button';
+    nameBtn.textContent = artist.name;
+
+    li.append(idx, nameBtn);
+    list.appendChild(li);
+    itemByKey.set(artist.key, li);
+
+    const group = document.createElement('ol');
+    group.className = 'rj-artist-works-group';
+    group.dataset.key = artist.key;
+    group.hidden = true;
+
+    artist.works.forEach((work, workIndex) => {
+      const workItem = document.createElement('li');
+      workItem.className = 'rj-work';
+
+      const workIdx = document.createElement('span');
+      workIdx.className = 'rj-work-index';
+      workIdx.textContent = `${rjPad(workIndex + 1, 3)}.`;
+
+      const workBtn = document.createElement('button');
+      workBtn.className = 'rj-project rj-project-trigger';
+      workBtn.type = 'button';
+      workBtn.textContent = work.label;
+      if (work.videoId) workBtn.dataset.videoId = work.videoId;
+      if (work.photoGallery) workBtn.dataset.photoGallery = work.photoGallery;
+
+      workItem.append(workIdx, workBtn);
+      group.appendChild(workItem);
+    });
+
+    worksPanel.appendChild(group);
+    groupByKey.set(artist.key, group);
+  });
+
+  let pinnedKey = null;
+
+  const setActive = (key) => {
+    root.classList.add('is-exploring');
+    itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === key));
+    groupByKey.forEach((group, k) => { group.hidden = k !== key; });
+  };
+
+  const clearActive = () => {
+    root.classList.remove('is-exploring');
+    itemByKey.forEach((item) => item.classList.remove('is-active'));
+    groupByKey.forEach((group) => { group.hidden = true; });
+  };
+
+  const restore = () => {
+    if (pinnedKey) setActive(pinnedKey);
+    else clearActive();
+  };
+
+  itemByKey.forEach((item, key) => {
+    const nameBtn = item.querySelector('.rj-artist-name');
+
+    if (!isTouchLike) {
+      item.addEventListener('mouseenter', () => setActive(key));
+      nameBtn.addEventListener('focus', () => setActive(key));
+    }
+
+    nameBtn.addEventListener('click', () => {
+      if (pinnedKey === key) {
+        pinnedKey = null;
+        if (isTouchLike) clearActive();
+        else setActive(key);
+      } else {
+        pinnedKey = key;
+        setActive(key);
+      }
+    });
+  });
+
+  if (!isTouchLike) {
+    root.addEventListener('mouseleave', restore);
+    root.addEventListener('focusout', (event) => {
+      if (root.contains(event.relatedTarget)) return;
+      restore();
+    });
+  }
+}
+
 function initTimer() {
   const timerElements = document.querySelectorAll('#rj-timer, .rj-timer');
   if (timerElements.length === 0) return false;
@@ -469,6 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediaFallbacks();
   initStarLogoProtection();
   initThemeMedia();
+  initProjectsExplorer();
   initProjectModal();
   initPhotoModal();
   initTraymaLogoTilt();

@@ -659,6 +659,105 @@ body {
   visibility: visible;
 }
 
+/* Artist explorer — alphabetical artist list (left) reveals that artist's
+   works (right) on hover; the others dim. Built from RJ_PROJECTS in script.js. */
+.rj-projects {
+  flex: 0 0 auto;
+  margin-top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rj-projects-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  column-gap: var(--gap-red);
+  align-items: start;
+}
+
+.rj-artist-list,
+.rj-artist-works-group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rj-artist-list,
+.rj-artist-works-group:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-blue);
+}
+
+.rj-artist-works-group[hidden] {
+  display: none;
+}
+
+.rj-artist,
+.rj-work {
+  display: flex;
+  align-items: baseline;
+  gap: var(--gap-green);
+}
+
+.rj-artist {
+  opacity: 1;
+  transition: opacity 180ms ease;
+}
+
+.rj-projects.is-exploring .rj-artist:not(.is-active) {
+  opacity: 0.35;
+}
+
+.rj-artist-index,
+.rj-work-index {
+  flex: 0 0 auto;
+  min-width: 2.4ch;
+  color: var(--rj-text);
+  opacity: 0.55;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+.rj-work-index {
+  min-width: 3.4ch;
+}
+
+.rj-artist-name {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  font: inherit;
+  line-height: inherit;
+  color: var(--rj-link);
+  text-transform: uppercase;
+  text-align: left;
+  cursor: pointer;
+}
+
+.rj-artist-name:hover,
+.rj-artist-name:focus-visible,
+.rj-artist.is-active .rj-artist-name {
+  background-color: var(--rj-project-hover-bg);
+  color: var(--rj-project-hover-text);
+}
+
+.rj-artist-name::selection {
+  background-color: #CECECE;
+  color: #000000;
+  -webkit-text-fill-color: #000000;
+  -webkit-text-stroke: 0 transparent;
+}
+
+.rj-artist-name::-moz-selection {
+  background-color: #CECECE;
+  color: #000000;
+  text-shadow: none;
+}
+
 /* Neutral placeholders while real media is dropped in */
 .rj-media-missing {
   position: relative;
@@ -1326,6 +1425,15 @@ body {
 
   .rj-project {
     margin-right: var(--gap-green);
+  }
+
+  .rj-projects-grid {
+    grid-template-columns: 1fr;
+    row-gap: var(--gap-green);
+  }
+
+  .rj-artist-works:empty {
+    display: none;
   }
 
   .rj-modal {
