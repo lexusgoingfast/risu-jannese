@@ -989,8 +989,15 @@ body {
   height: 100vh;
   min-height: 100vh;
   overflow: hidden;
-  background-color: #000000;
-  color: #FFFFFF;
+  --rj-trayma-bg: #000000;
+  --rj-trayma-ink: #222222;
+  --rj-trayma-ink-end: #393939;
+  --rj-trayma-mark-opacity: 0.14;
+  --rj-trayma-mark-gradient: linear-gradient(to bottom left, #FFFFFF 0%, var(--rj-trayma-ink-end) 100%);
+  --rj-trayma-text-gradient: linear-gradient(180deg, var(--rj-trayma-ink) 0%, var(--rj-trayma-ink-end) 100%);
+  --rj-trayma-time-color: #FFFFFF;
+  background-color: var(--rj-trayma-bg);
+  color: var(--rj-trayma-time-color);
   align-items: center;
 }
 
@@ -999,7 +1006,7 @@ body {
   width: 1856px;
   height: 1024px;
   flex: 0 0 auto;
-  background-color: #000000;
+  background-color: var(--rj-trayma-bg);
   transform: scale(var(--rj-trayma-scale));
   transform-origin: center center;
   user-select: none;
@@ -1028,7 +1035,7 @@ body {
 
 .rj-trayma-mark-img--light {
   background:
-    radial-gradient(circle at var(--rj-trayma-light-x, 50%) var(--rj-trayma-light-y, 42%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, #000000 82%);
+    radial-gradient(circle at var(--rj-trayma-light-x, 50%) var(--rj-trayma-light-y, 42%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, var(--rj-trayma-ink-end) 82%);
   mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   opacity: 0;
@@ -1037,10 +1044,10 @@ body {
 }
 
 .rj-trayma-mark-img--base {
-  background-color: #000000;
+  background: var(--rj-trayma-mark-gradient);
   mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
   -webkit-mask: url("assets/trayma-vector.svg") center / 100% 100% no-repeat;
-  opacity: 1;
+  opacity: var(--rj-trayma-mark-opacity);
   z-index: 1;
   transition: opacity 620ms ease;
 }
@@ -1055,14 +1062,17 @@ body {
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  color: #000000;
+  background: var(--rj-trayma-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   font-family: 'Times New Roman', Times, serif;
   font-size: 100px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  -webkit-text-fill-color: #000000;
+  -webkit-text-fill-color: transparent;
 }
 
 .rj-trayma-subtitle {
@@ -1071,14 +1081,17 @@ body {
   left: 50%;
   transform: translateX(-50%);
   margin: 0;
-  color: #000000;
+  background: var(--rj-trayma-text-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   font-family: 'Times New Roman', Times, serif;
   font-size: 25px;
   font-weight: 400;
   line-height: normal;
   text-align: center;
   white-space: nowrap;
-  -webkit-text-fill-color: #000000;
+  -webkit-text-fill-color: transparent;
 }
 
 .rj-trayma-title::after,
@@ -1087,7 +1100,7 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, #000000 82%);
+    radial-gradient(circle at var(--rj-trayma-text-light-x, 50%) var(--rj-trayma-text-light-y, 50%), #FFFFFF 0%, #E4E4E4 24%, #5E5E5E 58%, var(--rj-trayma-ink-end) 82%);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -1121,7 +1134,7 @@ body {
   display: block;
   min-width: 11ch;
   transform: translateX(-50%);
-  color: #FFFFFF;
+  color: var(--rj-trayma-time-color);
   font-family: var(--rj-font-ui);
   font-size: clamp(12px, 1.1vw, 16px);
   font-feature-settings: "tnum";
@@ -1337,7 +1350,7 @@ body {
     height: 100dvh;
     overflow: hidden;
     align-items: center;
-    background-color: #000000;
+    background-color: var(--rj-trayma-bg);
   }
 
   .rj-trayma {

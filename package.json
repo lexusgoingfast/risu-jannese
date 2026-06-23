@@ -1,0 +1,7 @@
+{
+  "name": "risu-jannese",
+  "private": true,
+  "scripts": {
+    "dev": "npx --yes http-server . -p 8000 -a 0.0.0.0 -c-1"
+  }
+}
