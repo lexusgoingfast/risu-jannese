@@ -60,68 +60,178 @@ function initWorkLists() {
   return true;
 }
 
-/* Source of truth for the artist explorer. One entry per work; the artist(s)
-   are parsed from the title (everything before the first spaced dash). */
-const RJ_PROJECTS = [
-  { title: '9mice – Do Vesni', videoId: 'Wb4-qaF7RAs' },
-  { title: '9mice, Егор Крид, тёмный принц, madk1d – Jealous', videoId: 'q4pVTvUOWJA' },
-  { title: '9mice – ГОША РУБЧИНСКИЙ', videoId: '9FfB-mhoy08' },
-  { title: '9mice – u+me', videoId: 'vQZY-0rws3w' },
-  { title: 'Nettspend – Tommy', videoId: 'nyMawpTaaG8' },
-  { title: 'Exvy, Fakov, FBS – Shhh', videoId: 'L-hu8_cRbVE' },
-  { title: 'madk1d – дырки в штанах', videoId: '3KVuiRBk5RI' },
-  { title: '9mice - SEOUL', videoId: '5X0HY_n77sU' },
-  { title: 'BRUNETTE – TRY', videoId: 'WblRgIwyWi4' },
-  { title: 'myspacemark - mannequin', videoId: '9YAbR-LkuAU' },
-  { title: 'gotlibgotlibgotlib — aromat', videoId: 'xnFAk-6Mt84' },
-  { title: 'Егор Крид – Море', videoId: 'qrU4xhBvMhc' },
-  { title: 'Элджей, Onative - MAC&CHEESE', videoId: 'wr6zDt-zV1w' },
-  { title: 'Foolboi Sasha - GOINGMYWAY', videoId: '0HIj_OZTm3Q' },
-  { title: 'Элджей, ANIKV - SPORT', videoId: 'TPP5agm13DI' },
-  { title: '9mice – RIOT MUZIK', videoId: 'yxc37RhrmxY' },
-  { title: 'India', photoGallery: 'india' },
-  { title: 'VIPERR X LIFEISWAR', photoGallery: 'viperr' },
+/* Artist explorer — fixed artist order from Figma (259:2); works mapped explicitly. */
+const RJ_ARTISTS = [
+  { key: '9mice', name: '9mice' },
+  { key: 'egor-kreed', name: 'egor kreed' },
+  { key: 'nettspend', name: 'Nettspend' },
+  { key: 'hype-o-holics', name: 'HYPE-O-HOLICS' },
+  { key: 'madk1d', name: 'madk1d' },
+  { key: 'gosha-rubchinskiy', name: 'gosha rubchinskiy' },
+  { key: 'myspacemark', name: 'myspacemark' },
+  { key: 'brunette', name: 'BRUNETTE' },
+  { key: 'gotlibgotlibgotlib', name: 'gotlibgotlibgotlib' },
+  { key: 'no-faith-studios', name: 'NO FAITH STUDIOS' },
+  { key: 'viperr-x-lifeiswar', name: 'VIPERR X LIFEISWAR' },
+  { key: 'eldzhey', name: 'eldzhey' },
+  { key: 'anikv', name: 'ANIKV' },
+  { key: 'dora', name: 'dora' },
+  { key: 'trayma', name: 'TRAYMA' },
+  { key: 'poemi-koso', name: 'Poemi Koso' },
 ];
 
-// A dash flanked by spaces splits "Artist(s) – Project". Names like "u+me"
-// or "MAC&CHEESE" have no such dash and are left intact.
-const RJ_ARTIST_SEPARATOR = /\s[–—-]\s/;
+const RJ_PROJECTS = [
+  { label: 'Do Vesni', videoId: 'Wb4-qaF7RAs', role: 'Directed', artists: ['9mice'] },
+  { label: 'Jealous', videoId: 'q4pVTvUOWJA', role: 'Camera', artists: ['9mice', 'egor-kreed', 'madk1d'] },
+  { label: 'ГОША РУБЧИНСКИЙ', videoId: '9FfB-mhoy08', role: 'Directed', artists: ['9mice', 'gosha-rubchinskiy'] },
+  { label: 'u+me', videoId: 'vQZY-0rws3w', role: 'Directed', artists: ['9mice'] },
+  { label: 'SEOUL', videoId: '5X0HY_n77sU', role: 'Directed', artists: ['9mice'] },
+  { label: 'RIOT MUZIK', videoId: 'yxc37RhrmxY', role: 'Directed', artists: ['9mice'] },
+  { label: 'Tommy', videoId: 'nyMawpTaaG8', role: 'Edit', artists: ['nettspend'] },
+  { label: 'Shhh', videoId: 'L-hu8_cRbVE', role: 'Directed', artists: ['hype-o-holics'] },
+  { label: 'дырки в штанах', videoId: '3KVuiRBk5RI', role: 'Edit', artists: ['madk1d'] },
+  { label: 'TRY', videoId: 'WblRgIwyWi4', role: 'Edit', artists: ['brunette'] },
+  { label: 'mannequin', videoId: '9YAbR-LkuAU', role: 'Edit', artists: ['myspacemark'] },
+  { label: 'aromat', videoId: 'xnFAk-6Mt84', role: 'Edit', artists: ['gotlibgotlibgotlib'] },
+  { label: 'Море', videoId: 'qrU4xhBvMhc', role: 'Edit', artists: ['egor-kreed'] },
+  { label: 'MAC&CHEESE', videoId: 'wr6zDt-zV1w', role: 'Edit', artists: ['eldzhey'] },
+  { label: 'SPORT', videoId: 'TPP5agm13DI', role: 'Directed', artists: ['eldzhey', 'anikv'] },
+  { label: 'VIPERR X LIFEISWAR', photoGallery: 'viperr', artists: ['viperr-x-lifeiswar'] },
+];
 
-function rjBuildArtistIndex(projects) {
-  const map = new Map();
+function rjBuildArtistExplorerData(artists, projects) {
+  const worksByKey = new Map(artists.map((artist) => [artist.key, []]));
   projects.forEach((project) => {
-    const match = project.title.match(RJ_ARTIST_SEPARATOR);
-    let artistsRaw;
-    let label;
-    if (match) {
-      artistsRaw = project.title.slice(0, match.index);
-      label = project.title.slice(match.index + match[0].length).trim();
-    } else {
-      artistsRaw = project.title;
-      label = project.title.trim();
-    }
-    const artists = artistsRaw
-      .split(',')
-      .map((name) => name.trim())
-      .filter(Boolean);
-    artists.forEach((name) => {
-      const key = name.toLocaleLowerCase('ru');
-      if (!map.has(key)) map.set(key, { key, name, works: [] });
-      map.get(key).works.push({
-        label,
+    (project.artists || []).forEach((key) => {
+      if (!worksByKey.has(key)) return;
+      worksByKey.get(key).push({
+        label: project.label,
         videoId: project.videoId || null,
         photoGallery: project.photoGallery || null,
+        role: project.role || null,
       });
     });
   });
-  return Array.from(map.values()).sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
-  );
+  return artists.map((artist) => ({
+    ...artist,
+    works: worksByKey.get(artist.key) || [],
+  }));
 }
 
 function rjPad(value, size) {
   return String(value).padStart(size, '0');
 }
+
+/* Slug for URL routing — lowercase, unicode letters/numbers kept, rest → dashes. */
+function rjSlug(value) {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/[\s/]+/g, '-')
+    .replace(/[^\p{L}\p{N}-]+/gu, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+/* Breadcrumb router — reflects explorer/modal state in the address bar:
+   /                          → home
+   /projects/<artist>         → artist pinned
+   /projects/<artist>/<work>  → work modal open
+   The visible on-page breadcrumb can be layered on later. */
+const rjRouter = {
+  artistKey: null,
+  workSlug: null,
+  applying: false,
+  works: new Map(),
+  closers: [],
+  _pin: null,
+  _unpin: null,
+
+  registerArtist(pin, unpin) {
+    this._pin = pin;
+    this._unpin = unpin;
+  },
+  registerWork(artistKey, slug, open) {
+    this.works.set(`${artistKey}/${slug}`, open);
+  },
+  registerCloser(fn) {
+    this.closers.push(fn);
+  },
+
+  path() {
+    if (this.artistKey && this.workSlug) return `/projects/${this.artistKey}/${this.workSlug}`;
+    if (this.artistKey) return `/projects/${this.artistKey}`;
+    return '/';
+  },
+  push(replace) {
+    const path = this.path();
+    const state = { artistKey: this.artistKey, workSlug: this.workSlug };
+    if (replace) {
+      history.replaceState(state, '', path);
+    } else if (path !== location.pathname) {
+      history.pushState(state, '', path);
+    }
+  },
+
+  setArtist(key) {
+    if (this.applying) return;
+    this.artistKey = key;
+    this.workSlug = null;
+    this.push(false);
+  },
+  clear() {
+    if (this.applying) return;
+    this.artistKey = null;
+    this.workSlug = null;
+    this.push(false);
+  },
+  setWork(artistKey, slug) {
+    if (this.applying) return;
+    this.artistKey = artistKey;
+    this.workSlug = slug;
+    this.push(false);
+  },
+  clearWork() {
+    if (this.applying) return;
+    this.workSlug = null;
+    this.push(false);
+  },
+
+  parse(pathname) {
+    const parts = pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+    if (parts[0] !== 'projects') return { artistKey: null, workSlug: null };
+    return { artistKey: parts[1] || null, workSlug: parts[2] || null };
+  },
+
+  apply(state) {
+    const targetArtist = (state && state.artistKey) || null;
+    const targetWork = (state && state.workSlug) || null;
+    this.applying = true;
+    this.closers.forEach((fn) => fn());
+    if (targetArtist) {
+      if (this._pin) this._pin(targetArtist);
+    } else if (this._unpin) {
+      this._unpin();
+    }
+    if (targetArtist && targetWork) {
+      const open = this.works.get(`${targetArtist}/${targetWork}`);
+      if (open) open();
+    }
+    this.artistKey = targetArtist;
+    this.workSlug = targetWork;
+    this.applying = false;
+  },
+
+  init() {
+    if (!document.querySelector('.rj-projects')) return;
+    const parsed = this.parse(location.pathname);
+    if (parsed.artistKey) this.apply(parsed);
+    this.push(true);
+    window.addEventListener('popstate', (event) => {
+      this.apply(event.state || this.parse(location.pathname));
+    });
+  },
+};
 
 function initProjectsExplorer() {
   const root = document.querySelector('.rj-projects');
@@ -130,8 +240,7 @@ function initProjectsExplorer() {
   const worksPanel = root.querySelector('.rj-artist-works');
   if (!list || !worksPanel) return;
 
-  const artists = rjBuildArtistIndex(RJ_PROJECTS);
-  const isTouchLike = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  const artists = rjBuildArtistExplorerData(RJ_ARTISTS, RJ_PROJECTS);
 
   const itemByKey = new Map();
   const groupByKey = new Map();
@@ -161,7 +270,7 @@ function initProjectsExplorer() {
 
     artist.works.forEach((work, workIndex) => {
       const workItem = document.createElement('li');
-      workItem.className = 'rj-work';
+      workItem.className = 'rj-work rj-work-item';
 
       const workIdx = document.createElement('span');
       workIdx.className = 'rj-work-index';
@@ -174,7 +283,18 @@ function initProjectsExplorer() {
       if (work.videoId) workBtn.dataset.videoId = work.videoId;
       if (work.photoGallery) workBtn.dataset.photoGallery = work.photoGallery;
 
+      const workSlug = rjSlug(work.label);
+      workBtn.dataset.artistKey = artist.key;
+      workBtn.dataset.workSlug = workSlug;
+      rjRouter.registerWork(artist.key, workSlug, () => workBtn.click());
+
       workItem.append(workIdx, workBtn);
+      if (work.role) {
+        const role = document.createElement('span');
+        role.className = 'rj-role';
+        role.textContent = work.role;
+        workItem.appendChild(role);
+      }
       group.appendChild(workItem);
     });
 
@@ -183,7 +303,6 @@ function initProjectsExplorer() {
   });
 
   let pinnedKey = null;
-  let previewKey = null;
   let scrollLockY = 0;
 
   const lockScroll = () => {
@@ -199,72 +318,50 @@ function initProjectsExplorer() {
   };
 
   const render = () => {
-    const activeKey = pinnedKey || previewKey;
-
     root.classList.toggle('is-pinned', Boolean(pinnedKey));
-
-    itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === activeKey));
-    groupByKey.forEach((group, k) => { group.hidden = k !== activeKey; });
+    itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === pinnedKey));
+    groupByKey.forEach((group, k) => { group.hidden = k !== pinnedKey; });
   };
 
-  const clearPinned = () => {
-    if (!pinnedKey && !previewKey) return;
+  const pinDom = (key) => {
+    if (pinnedKey === key) return;
+    if (!pinnedKey) lockScroll();
+    pinnedKey = key;
+    render();
+  };
+
+  const unpinDom = () => {
+    if (!pinnedKey) return;
     pinnedKey = null;
-    previewKey = null;
     unlockScroll();
     render();
   };
 
-  const clearPreview = () => {
-    previewKey = null;
-    if (!pinnedKey) render();
-  };
+  rjRouter.registerArtist(pinDom, unpinDom);
 
   itemByKey.forEach((item, key) => {
     const nameBtn = item.querySelector('.rj-artist-name');
 
-    if (!isTouchLike) {
-      nameBtn.addEventListener('mouseenter', () => {
-        if (pinnedKey) return;
-        previewKey = key;
-        render();
-      });
-
-      nameBtn.addEventListener('mouseleave', () => {
-        if (pinnedKey) return;
-        if (previewKey === key) {
-          previewKey = null;
-          render();
-        }
-      });
-    }
-
     nameBtn.addEventListener('click', () => {
       if (pinnedKey === key) {
-        clearPinned();
+        unpinDom();
+        rjRouter.clear();
         return;
       }
 
-      pinnedKey = key;
-      previewKey = key;
-      lockScroll();
-      render();
+      pinDom(key);
+      rjRouter.setArtist(key);
     });
   });
 
   document.addEventListener('click', (event) => {
     if (!pinnedKey) return;
     if (event.target.closest('.rj-artist-name')) return;
-    clearPinned();
+    if (event.target.closest('.rj-artist-works')) return;
+    if (event.target.closest('.rj-modal')) return;
+    unpinDom();
+    rjRouter.clear();
   });
-
-  if (!isTouchLike) {
-    root.addEventListener('mouseleave', clearPreview);
-    root.addEventListener('focusout', (event) => {
-      if (pinnedKey || root.contains(event.relatedTarget)) return;
-      clearPreview();
-    });
-  }
 }
 
 function initTimer() {
@@ -385,6 +482,9 @@ function initProjectModal() {
     media.removeAttribute('src');
     media.setAttribute('title', title);
     if (panel) panel.setAttribute('aria-label', title);
+    if (trigger.dataset.artistKey && trigger.dataset.workSlug) {
+      rjRouter.setWork(trigger.dataset.artistKey, trigger.dataset.workSlug);
+    }
     openModalAnimated(modal, () => {
       requestAnimationFrame(() => {
         media.setAttribute('src', videoSrc);
@@ -396,10 +496,13 @@ function initProjectModal() {
     if (!modal.classList.contains('is-open')) return;
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
+    rjRouter.clearWork();
     closeModalAnimated(modal, () => {
       media.removeAttribute('src');
     });
   };
+
+  rjRouter.registerCloser(closeModal);
 
   const closeButton = modal.querySelector('.rj-video-modal-close');
   if (closeButton) closeButton.addEventListener('click', closeModal);
@@ -488,6 +591,9 @@ function initPhotoModal() {
       activeTrigger = trigger;
       activePhotos = gallery;
       activeIndex = 0;
+      if (trigger.dataset.artistKey && trigger.dataset.workSlug) {
+        rjRouter.setWork(trigger.dataset.artistKey, trigger.dataset.workSlug);
+      }
       renderPhoto();
       openModalAnimated(modal);
     };
@@ -503,12 +609,15 @@ function initPhotoModal() {
     if (!modal.classList.contains('is-open')) return;
     if (activeTrigger) activeTrigger.blur();
     activeTrigger = null;
+    rjRouter.clearWork();
     closeModalAnimated(modal, () => {
       media.removeAttribute('src');
       activePhotos = [];
       activeIndex = 0;
     });
   };
+
+  rjRouter.registerCloser(closeModal);
 
   triggers.forEach((trigger) => {
     trigger.addEventListener('click', () => openModal(trigger));
@@ -651,8 +760,10 @@ function initPreloader() {
     const wait = Math.max(0, MIN_VISIBLE - (performance.now() - start));
     window.setTimeout(() => {
       overlay.classList.add('is-hidden');
-      document.documentElement.classList.remove('rj-preloading');
-      const cleanup = () => overlay.remove();
+      const cleanup = () => {
+        document.documentElement.classList.remove('rj-preloading');
+        overlay.remove();
+      };
       overlay.addEventListener('transitionend', cleanup, { once: true });
       window.setTimeout(cleanup, 1100); // fallback if transitionend doesn't fire
     }, wait);
@@ -679,6 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProjectsExplorer();
   initProjectModal();
   initPhotoModal();
+  rjRouter.init();
   initTraymaLogoTilt();
   window.addEventListener('resize', () => {
     fitYearLists();

@@ -75,8 +75,8 @@
   --rj-border: #E0E0E0;
   --rj-role-color: #B8B8B8;
   --rj-media-placeholder: #F3F3F3;
-  --rj-project-hover-bg: #D71920;
-  --rj-project-hover-text: var(--rj-bg);
+  --rj-project-hover-bg: #c81114;
+  --rj-project-hover-text: #FEFFFF;
 
   /* Minimal scrollbar (matches borders / role gray) */
   --rj-scroll-thumb: #CDCDCD;
@@ -96,6 +96,11 @@
   --rj-scale: 1;
   --rj-trayma-scale: 1;
 
+  /* Music player */
+  --rj-player-icon: #9A9A9A;
+  --rj-player-icon-hover: #6E6E6E;
+  --rj-player-track-bg: rgba(0, 0, 0, 0.03);
+
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,6 +116,9 @@
     --rj-project-hover-text: #010102;
     --rj-scroll-thumb: #632B8F;
     --rj-scroll-thumb-hover: #8B5BA8;
+    --rj-player-icon: #808081;
+    --rj-player-icon-hover: #B5B5BD;
+    --rj-player-track-bg: rgba(255, 255, 255, 0.1);
   }
 }
 
@@ -166,6 +174,21 @@
     0 0.85px 0 #000000;
 }
 
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    -webkit-text-stroke: 0.85px #FFFFFF;
+  }
+
+  ::-moz-selection {
+    color: #FFFFFF;
+    text-shadow:
+      -0.85px 0 0 #FFFFFF,
+      0.85px 0 0 #FFFFFF,
+      0 -0.85px 0 #FFFFFF,
+      0 0.85px 0 #FFFFFF;
+  }
+}
+
 /* Preloader — a welcome line resolving out of blur in the center of the page.
    The layout frames stay visible; only the inner content is held back. */
 .rj-preloader {
@@ -176,6 +199,10 @@
   align-items: center;
   justify-content: center;
   padding: var(--gap-red);
+  pointer-events: auto;
+}
+
+.rj-preloader.is-hidden {
   pointer-events: none;
 }
 
@@ -209,18 +236,35 @@
    wrappers (e.g. the mobile sidebar footer). */
 .rj-video-avatar,
 .rj-star-logo-link,
+.rj-chat,
 .rj-contacts,
 .rj-header-logo,
+.rj-flowers,
+.rj-player,
 .rj-scroll {
   transition: opacity 700ms steps(11);
 }
 
 html.rj-preloading .rj-video-avatar,
 html.rj-preloading .rj-star-logo-link,
+html.rj-preloading .rj-chat,
 html.rj-preloading .rj-contacts,
 html.rj-preloading .rj-header-logo,
+html.rj-preloading .rj-flowers,
+html.rj-preloading .rj-player,
 html.rj-preloading .rj-scroll {
   opacity: 0;
+}
+
+html.rj-preloading .rj-portfolio-shell,
+html.rj-preloading .rj-portfolio-shell *,
+html.rj-preloading .rj-modal,
+html.rj-preloading .rj-modal * {
+  pointer-events: none !important;
+}
+
+html.rj-preloading {
+  touch-action: none;
 }
 
 /* During preload it's just a plain white box — no internal frame borders. */
@@ -411,17 +455,63 @@ body {
   text-decoration: underline;
 }
 
-.rj-contacts a::selection {
-  background-color: #CECECE;
-  color: #000000;
-  -webkit-text-fill-color: #000000;
-  -webkit-text-stroke: 0 transparent;
+/* Star logo + R-CHAT button on one row above the contacts. */
+.rj-footer-top {
+  display: flex;
+  align-items: stretch;
+  gap: var(--gap-red);
+  height: 68px;
+  margin-bottom: var(--gap-green);
 }
 
-.rj-contacts a::-moz-selection {
-  background-color: #CECECE;
-  color: #000000;
-  text-shadow: none;
+.rj-footer-top .rj-star-logo-link {
+  width: auto;
+  height: 100%;
+  margin-bottom: 0;
+}
+
+.rj-footer-top .rj-star-logo-link picture,
+.rj-footer-top .rj-star-logo {
+  width: auto;
+  height: 100%;
+}
+
+/* R-CHAT thumbnail button. */
+.rj-chat {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  border: 1px solid #632b8f;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: block;
+  cursor: pointer;
+  -webkit-user-drag: none;
+}
+
+.rj-chat-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.rj-chat-label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 2px 7px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #eaeaea;
+  font-size: var(--rj-figma-text);
+  letter-spacing: 0.08em;
+  text-align: right;
+  line-height: 1.5;
+  pointer-events: none;
 }
 
 .rj-content {
@@ -434,6 +524,31 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+}
+
+/* Decorative carnation branch — lower-right of the content panel (per mockup). */
+.rj-flowers {
+  position: absolute;
+  right: 12px;
+  bottom: 8%;
+  height: 53%;
+  width: auto;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Keep the text content above the decorative branch. */
+.rj-content > .rj-header-logo,
+.rj-content > .rj-scroll {
+  position: relative;
+  z-index: 1;
+}
+
+/* .rj-player is already position:absolute — only lift its stacking. */
+.rj-content > .rj-player {
+  z-index: 1;
 }
 
 .rj-header-logo {
@@ -459,8 +574,8 @@ body {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  /* room so the last items don't hide behind the absolute timer */
-  padding-bottom: var(--gap-red);
+  /* room so the last items don't hide behind the absolute timer / player */
+  padding-bottom: calc(var(--gap-red) + 20px);
   display: flex;
   flex-direction: column;
 }
@@ -609,24 +724,6 @@ body {
 
 .rj-project {
   color: var(--rj-link);
-  padding: 2px 4px;
-  margin-left: -4px;
-  margin-top: -2px;
-  margin-bottom: -2px;
-  margin-right: calc(var(--gap-green) - 4px);
-}
-
-.rj-project::selection {
-  background-color: #CECECE;
-  color: #000000;
-  -webkit-text-fill-color: #000000;
-  -webkit-text-stroke: 0 transparent;
-}
-
-.rj-project::-moz-selection {
-  background-color: #CECECE;
-  color: #000000;
-  text-shadow: none;
 }
 
 .rj-project-trigger {
@@ -634,14 +731,20 @@ body {
   border: 0;
   background: transparent;
   border-radius: 0;
+  box-sizing: content-box;
+  display: inline-block;
+  padding: 2px 2px;
+  margin: -2px -2px;
   font: inherit;
-  line-height: inherit;
+  line-height: normal;
+  color: inherit;
   cursor: pointer;
   text-align: left;
+  vertical-align: baseline;
 }
 
-.rj-project:hover,
-.rj-project:focus-visible {
+.rj-project-trigger:hover,
+.rj-project-trigger:focus-visible {
   background-color: var(--rj-project-hover-bg);
   color: var(--rj-project-hover-text);
 }
@@ -653,8 +756,12 @@ body {
   transition: opacity 120ms ease, visibility 120ms ease;
 }
 
-.rj-project:hover + .rj-role,
-.rj-project:focus-visible + .rj-role {
+.rj-work-item .rj-role {
+  margin-left: 12px;
+}
+
+.rj-project-trigger:hover + .rj-role,
+.rj-project-trigger:focus-visible + .rj-role {
   opacity: 1;
   visibility: visible;
 }
@@ -686,11 +793,30 @@ body {
 .rj-artist-works-group:not([hidden]) {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 }
 
 .rj-artist-works-group[hidden] {
   display: none;
+}
+
+/* Decorative scrollbar-style guide to the left of the artist list (Figma 41:126:
+   #632b8f at 20%, 3px wide, spanning the list). The list is nudged right to clear it. */
+.rj-artist-list {
+  position: relative;
+  padding-left: 28px;
+}
+
+.rj-artist-list::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 2px;
+  background: rgba(99, 43, 143, 0.2);
+  pointer-events: none;
 }
 
 .rj-artist,
@@ -698,6 +824,11 @@ body {
   display: flex;
   align-items: baseline;
   gap: 0;
+  line-height: 26px;
+}
+
+.rj-work.rj-work-item {
+  flex-wrap: wrap;
 }
 
 .rj-artist {
@@ -717,14 +848,16 @@ body {
   font-feature-settings: "tnum";
 }
 
-/* Figma node 6:186 — index at x≈639, name at x≈728 (≈89px column) */
+/* Figma 259:2 — index x≈639.68, name x≈677.29 (≈37.6px at 16px) */
 .rj-artist-index {
-  min-width: 5.5625em;
+  width: 2.35em;
+  flex: 0 0 2.35em;
 }
 
-/* Figma — work index at x≈953, title at x≈1057 (≈103px column) */
+/* Figma 265:74 — work index x≈953.23, title x≈1056.59 (≈103.4px at 16px) */
 .rj-work-index {
-  min-width: 6.46em;
+  width: 6.46em;
+  flex: 0 0 6.46em;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -747,34 +880,29 @@ html.rj-projects-scroll-locked body {
   border: 0;
   background: transparent;
   border-radius: 0;
-  padding: 2px 4px;
-  margin: -2px -4px;
+  box-sizing: content-box;
+  display: inline-block;
+  padding: 2px 2px;
+  margin: -2px -2px;
   font: inherit;
-  line-height: inherit;
+  line-height: normal;
   color: var(--rj-link);
   text-transform: uppercase;
   text-align: left;
   cursor: pointer;
+  vertical-align: baseline;
 }
 
 .rj-artist-name:hover,
-.rj-artist-name:focus-visible,
-.rj-projects.is-pinned .rj-artist.is-active .rj-artist-name {
+.rj-artist-name:focus-visible {
   background-color: var(--rj-project-hover-bg);
   color: var(--rj-project-hover-text);
 }
 
-.rj-artist-name::selection {
-  background-color: #CECECE;
-  color: #000000;
-  -webkit-text-fill-color: #000000;
-  -webkit-text-stroke: 0 transparent;
-}
-
-.rj-artist-name::-moz-selection {
-  background-color: #CECECE;
-  color: #000000;
-  text-shadow: none;
+/* Figma 21:12 — pinned artist highlight */
+.rj-projects.is-pinned .rj-artist.is-active .rj-artist-name {
+  background-color: var(--rj-project-hover-bg);
+  color: var(--rj-project-hover-text);
 }
 
 /* Neutral placeholders while real media is dropped in */
@@ -798,6 +926,112 @@ html.rj-projects-scroll-locked body {
   font-size: var(--rj-figma-text);
   color: var(--rj-text);
   font-family: var(--rj-font-ui);
+}
+
+/* Music player — sits at the bottom of the content sheet, to the right of the
+   sidebar email. Powered by the self-contained <waveform-player> web component:
+   a canvas waveform whose columns react to the track in real time (Web Audio
+   FFT). Click the waveform to play/pause. */
+.rj-player {
+  position: absolute;
+  left: var(--gap-green);
+  bottom: var(--gap-green);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 189.523px;
+  color: var(--rj-text);
+  font-family: var(--rj-font-ui);
+  font-size: var(--rj-figma-text);
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Control row: play/pause button + the title/waveform stack. */
+.rj-player-bar {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+  min-height: 28px;
+  padding-left: 33px;
+}
+
+/* Waveform spans the whole bar — behind both the play button and the title. */
+.rj-waveform {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+}
+
+.rj-player-toggle {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  width: 12px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--rj-player-icon);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.rj-player-toggle:hover {
+  color: var(--rj-player-icon-hover);
+}
+
+/* Play state: a right-pointing triangle. */
+.rj-player-icon {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 5px 0 5px 8px;
+  border-color: transparent transparent transparent currentColor;
+}
+
+/* Pause state: two vertical bars (swap via .is-playing on the button). */
+.rj-player-toggle.is-playing .rj-player-icon {
+  position: relative;
+  width: 8px;
+  height: 11px;
+  border: 0;
+}
+
+.rj-player-toggle.is-playing .rj-player-icon::before,
+.rj-player-toggle.is-playing .rj-player-icon::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 2.5px;
+  height: 11px;
+  background: currentColor;
+}
+
+.rj-player-toggle.is-playing .rj-player-icon::before { left: 0; }
+.rj-player-toggle.is-playing .rj-player-icon::after { right: 0; }
+
+.rj-player-title {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  pointer-events: none;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #808081;
+  padding-bottom: 3px;
 }
 
 .rj-modal {
@@ -971,6 +1205,17 @@ html.rj-projects-scroll-locked body {
     width: calc(var(--rj-design-width) * var(--rj-scale));
     height: calc(var(--rj-design-height) * var(--rj-scale));
     transform: translate(-50%, -50%);
+  }
+}
+
+/* Light theme: cover the full viewport so the gray side margins / sheet
+   borders don't show as frames around the modal. */
+@media (min-width: 768px) and (prefers-color-scheme: light) {
+  .rj-video-modal-scrim {
+    inset: 0;
+    width: auto;
+    height: auto;
+    transform: none;
   }
 }
 
@@ -1368,6 +1613,18 @@ html.rj-projects-scroll-locked body {
     display: contents;
   }
 
+  .rj-footer-top {
+    display: contents;
+  }
+
+  .rj-chat {
+    display: none;
+  }
+
+  .rj-flowers {
+    display: none;
+  }
+
   .rj-star-logo-link {
     position: absolute;
     top: 678px;
@@ -1442,7 +1699,7 @@ html.rj-projects-scroll-locked body {
     gap: var(--gap-blue);
   }
 
-  .rj-project {
+  .rj-work-item > .rj-project:not(.rj-project-trigger) {
     margin-right: var(--gap-green);
   }
 
@@ -1501,6 +1758,13 @@ html.rj-projects-scroll-locked body {
     position: static;
     justify-self: end;
     font-size: var(--rj-figma-text);
+  }
+
+  .rj-player {
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin-top: var(--gap-green);
   }
 
   body.rj-trayma-page {

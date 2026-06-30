@@ -12,6 +12,7 @@
   <link rel="preload" href="assets/fonts/TTInterfaces-Regular.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="preload" href="assets/fonts/TTInterfaces-Medium.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="assets/components/WaveformPlayer.css" />
   <script>document.documentElement.classList.add('rj-preloading');</script>
 </head>
 <body>
@@ -25,12 +26,26 @@
       <video class="rj-video-avatar rj-video-avatar--light" src="assets/undo-relife.webm" autoplay loop muted playsinline draggable="false"></video>
       <video class="rj-video-avatar rj-video-avatar--dark" src="assets/light2.webm" autoplay loop muted playsinline draggable="false"></video>
       <div class="rj-sidebar-footer">
-        <a class="rj-star-logo-link" href="trayma.html" aria-label="Open TRAYMA page">
-          <picture>
-            <source srcset="assets/tr-dark.svg" media="(prefers-color-scheme: dark)" type="image/svg+xml" />
-            <img class="rj-star-logo" src="assets/tr-white.svg" alt="TRAUMA logo" draggable="false" />
-          </picture>
-        </a>
+        <div class="rj-footer-top">
+          <a class="rj-star-logo-link" href="/trayma" aria-label="Open TRAYMA page">
+            <picture>
+              <source srcset="assets/tr-dark.svg" media="(prefers-color-scheme: dark)" type="image/svg+xml" />
+              <img class="rj-star-logo" src="assets/tr-white.svg" alt="TRAUMA logo" draggable="false" />
+            </picture>
+          </a>
+          <a class="rj-chat" href="#" aria-label="Open R-CHAT">
+            <img class="rj-chat-thumb" src="assets/r-chat-thumb.png" alt="" draggable="false" />
+            <span class="rj-chat-tap" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                <path d="M18 11V6a2 2 0 0 0-4 0v1"/>
+                <path d="M14 10V4a2 2 0 0 0-4 0v2"/>
+                <path d="M10 10.5V6a2 2 0 0 0-4 0v8"/>
+                <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+              </svg>
+            </span>
+            <span class="rj-chat-label">R-CHAT</span>
+          </a>
+        </div>
         <div class="rj-contacts">
           <a href="https://instagram.com/risujannise" target="_blank" rel="noopener noreferrer">Life thru his eyes</a>
           <a href="mailto:rj90themon@gmail.com">rj90themon@gmail.com</a>
@@ -40,6 +55,7 @@
     </aside>
 
     <main class="rj-content">
+      <img class="rj-flowers" src="assets/flowers-right.png" alt="" aria-hidden="true" draggable="false" />
       <img class="rj-header-logo" src="assets/rj-logo.svg" alt="Risu Jannise" draggable="false" />
 
       <div class="rj-scroll">
@@ -54,14 +70,24 @@
         <p>In parallel, Risu is developing his own project <strong>TRAYMA</strong> — a creative-ideological movement in its early stages.</p>
       </div>
 
-      <section class="rj-projects" aria-label="Projects">
-        <h2 class="rj-category-title">Projects</h2>
+      <section class="rj-projects" aria-label="Project’">
+        <h2 class="rj-category-title">Project’</h2>
         <div class="rj-projects-grid">
           <ol class="rj-artist-list" aria-label="Artists"></ol>
           <div class="rj-artist-works" aria-label="Selected artist projects"></div>
         </div>
       </section>
 
+      </div>
+
+      <div class="rj-player" id="rj-player" aria-label="Music player">
+        <div class="rj-player-bar">
+          <div class="rj-waveform" id="rj-waveform"></div>
+          <button class="rj-player-toggle" id="rj-player-toggle" type="button" aria-label="Play track" aria-pressed="false">
+            <span class="rj-player-icon" aria-hidden="true"></span>
+          </button>
+          <span class="rj-player-title">Rabit – Bad Dreams</span>
+        </div>
       </div>
     </main>
   </div>
@@ -92,6 +118,29 @@
     </div>
   </div>
 
+  <script type="module">
+    import mountWaveformPlayer from './assets/components/WaveformPlayer.js';
+    const mount = document.getElementById('rj-waveform');
+    const toggleBtn = document.getElementById('rj-player-toggle');
+    if (mount) {
+      const player = mountWaveformPlayer(mount, {
+        src: 'assets/audio/rabit-bad-dreams.mp3',
+        color: 'rgba(255, 255, 255, 0.1)',
+        columns: 64,
+        height: 28,
+        reactivity: 'spectrum',
+        baseline: 'bottom',
+        controls: false,
+        onPlayingChange: (playing) => {
+          if (!toggleBtn) return;
+          toggleBtn.classList.toggle('is-playing', playing);
+          toggleBtn.setAttribute('aria-pressed', String(playing));
+          toggleBtn.setAttribute('aria-label', playing ? 'Pause track' : 'Play track');
+        },
+      });
+      if (toggleBtn) toggleBtn.addEventListener('click', () => player.toggle());
+    }
+  </script>
   <script src="script.js"></script>
 </body>
 </html>

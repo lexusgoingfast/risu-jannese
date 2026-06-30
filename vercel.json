@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/trayma.html",
+      "destination": "/trayma",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/projects",
+      "destination": "/"
+    },
+    {
+      "source": "/projects/(.*)",
+      "destination": "/"
+    }
+  ]
+}
