@@ -303,7 +303,13 @@ function initProjectsExplorer() {
   });
 
   let pinnedKey = null;
+  let previewKey = null;
   let scrollLockY = 0;
+
+  const hasWorks = (key) => {
+    const group = groupByKey.get(key);
+    return Boolean(group && group.children.length > 0);
+  };
 
   const lockScroll = () => {
     scrollLockY = window.scrollY;
@@ -318,9 +324,12 @@ function initProjectsExplorer() {
   };
 
   const render = () => {
+    const previewing = !pinnedKey && Boolean(previewKey) && hasWorks(previewKey);
+    const shownKey = pinnedKey || (previewing ? previewKey : null);
     root.classList.toggle('is-pinned', Boolean(pinnedKey));
+    root.classList.toggle('is-previewing', previewing);
     itemByKey.forEach((item, k) => item.classList.toggle('is-active', k === pinnedKey));
-    groupByKey.forEach((group, k) => { group.hidden = k !== pinnedKey; });
+    groupByKey.forEach((group, k) => { group.hidden = k !== shownKey; });
   };
 
   const pinDom = (key) => {
@@ -351,6 +360,20 @@ function initProjectsExplorer() {
 
       pinDom(key);
       rjRouter.setArtist(key);
+    });
+
+    // Hover preview — reveal the artist's works (where they exist) at reduced
+    // opacity without pinning. The pinned state always takes priority.
+    item.addEventListener('mouseenter', () => {
+      if (pinnedKey || !hasWorks(key)) return;
+      previewKey = key;
+      render();
+    });
+
+    item.addEventListener('mouseleave', () => {
+      if (pinnedKey || previewKey !== key) return;
+      previewKey = null;
+      render();
     });
   });
 
@@ -780,6 +803,11 @@ function initPreloader() {
 initPreloader();
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (document.body.classList.contains('rj-closed-page')) {
+    initTimer();
+    return;
+  }
+
   initWorkLists();
   fitPortfolioToViewport();
   fitTraymaToViewport();

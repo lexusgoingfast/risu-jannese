@@ -8,12 +8,24 @@
   ],
   "rewrites": [
     {
-      "source": "/projects",
-      "destination": "/"
+      "source": "/",
+      "destination": "/closed.html"
     },
     {
-      "source": "/projects/(.*)",
-      "destination": "/"
+      "source": "/trayma",
+      "destination": "/closed.html"
+    },
+    {
+      "source": "/trayma/:path*",
+      "destination": "/closed.html"
+    },
+    {
+      "source": "/projects",
+      "destination": "/closed.html"
+    },
+    {
+      "source": "/projects/:path*",
+      "destination": "/closed.html"
     }
   ]
 }

@@ -12,7 +12,6 @@
   <link rel="preload" href="assets/fonts/TTInterfaces-Regular.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="preload" href="assets/fonts/TTInterfaces-Medium.ttf" as="font" type="font/ttf" crossorigin />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="assets/components/WaveformPlayer.css" />
   <script>document.documentElement.classList.add('rj-preloading');</script>
 </head>
 <body>
@@ -34,14 +33,8 @@
             </picture>
           </a>
           <a class="rj-chat" href="#" aria-label="Open R-CHAT">
-            <img class="rj-chat-thumb" src="assets/r-chat-thumb.png" alt="" draggable="false" />
-            <span class="rj-chat-tap" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 11V6a2 2 0 0 0-4 0v1"/>
-                <path d="M14 10V4a2 2 0 0 0-4 0v2"/>
-                <path d="M10 10.5V6a2 2 0 0 0-4 0v8"/>
-                <path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
-              </svg>
+            <span class="rj-chat-media">
+              <img class="rj-chat-thumb" src="assets/r-chat-thumb.png" alt="" draggable="false" />
             </span>
             <span class="rj-chat-label">R-CHAT</span>
           </a>
@@ -80,14 +73,8 @@
 
       </div>
 
-      <div class="rj-player" id="rj-player" aria-label="Music player">
-        <div class="rj-player-bar">
-          <div class="rj-waveform" id="rj-waveform"></div>
-          <button class="rj-player-toggle" id="rj-player-toggle" type="button" aria-label="Play track" aria-pressed="false">
-            <span class="rj-player-icon" aria-hidden="true"></span>
-          </button>
-          <span class="rj-player-title">Rabit – Bad Dreams</span>
-        </div>
+      <div class="rj-player" id="rj-player" aria-hidden="true">
+        <img class="rj-player-image" src="assets/player-rj.png" alt="" width="612" height="23" draggable="false" />
       </div>
     </main>
   </div>
@@ -118,29 +105,6 @@
     </div>
   </div>
 
-  <script type="module">
-    import mountWaveformPlayer from './assets/components/WaveformPlayer.js';
-    const mount = document.getElementById('rj-waveform');
-    const toggleBtn = document.getElementById('rj-player-toggle');
-    if (mount) {
-      const player = mountWaveformPlayer(mount, {
-        src: 'assets/audio/rabit-bad-dreams.mp3',
-        color: 'rgba(255, 255, 255, 0.1)',
-        columns: 64,
-        height: 28,
-        reactivity: 'spectrum',
-        baseline: 'bottom',
-        controls: false,
-        onPlayingChange: (playing) => {
-          if (!toggleBtn) return;
-          toggleBtn.classList.toggle('is-playing', playing);
-          toggleBtn.setAttribute('aria-pressed', String(playing));
-          toggleBtn.setAttribute('aria-label', playing ? 'Pause track' : 'Play track');
-        },
-      });
-      if (toggleBtn) toggleBtn.addEventListener('click', () => player.toggle());
-    }
-  </script>
   <script src="script.js"></script>
 </body>
 </html>

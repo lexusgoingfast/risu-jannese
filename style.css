@@ -77,6 +77,9 @@
   --rj-media-placeholder: #F3F3F3;
   --rj-project-hover-bg: #c81114;
   --rj-project-hover-text: #FEFFFF;
+  --rj-index-color: #E7E6E8;
+  --rj-pink-35: rgba(255, 0, 175, 0.35);
+  --rj-project-color: rgba(0, 0, 0, 0.35);
 
   /* Minimal scrollbar (matches borders / role gray) */
   --rj-scroll-thumb: #CDCDCD;
@@ -114,6 +117,8 @@
     --rj-media-placeholder: #010102;
     --rj-project-hover-bg: #CECECE;
     --rj-project-hover-text: #010102;
+    --rj-pink-35: rgba(255, 0, 175, 0.35);
+    --rj-project-color: rgba(255, 255, 255, 0.35);
     --rj-scroll-thumb: #632B8F;
     --rj-scroll-thumb-hover: #8B5BA8;
     --rj-player-icon: #808081;
@@ -413,7 +418,6 @@ body {
 
 .rj-star-logo-link {
   display: block;
-  width: 60px;
   margin-bottom: var(--gap-green);
   user-select: none;
   -webkit-user-select: none;
@@ -451,42 +455,62 @@ body {
   text-decoration: none;
 }
 
-.rj-contacts a:hover {
-  text-decoration: underline;
+/* Dashed underline with a wider dash gap (native text-decoration can't control it). */
+.rj-contacts a:first-child,
+.rj-contacts a[href^="mailto:"] {
+  background-image: linear-gradient(to right, currentColor 3px, transparent 3px);
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
+  background-position: left bottom;
+  padding-bottom: 3px;
 }
 
-/* Star logo + R-CHAT button on one row above the contacts. */
+/* Star logo + R-CHAT button on one row above the contacts (Figma 44:534–536). */
 .rj-footer-top {
   display: flex;
-  align-items: stretch;
+  align-items: flex-start;
   gap: var(--gap-red);
-  height: 68px;
+  width: 100%;
   margin-bottom: var(--gap-green);
 }
 
 .rj-footer-top .rj-star-logo-link {
-  width: auto;
-  height: 100%;
+  flex: 0 0 auto;
+  width: 63.049px;
+  height: 72.804px;
   margin-bottom: 0;
 }
 
 .rj-footer-top .rj-star-logo-link picture,
 .rj-footer-top .rj-star-logo {
-  width: auto;
+  width: 100%;
   height: 100%;
 }
 
-/* R-CHAT thumbnail button. */
+.rj-footer-top .rj-star-logo {
+  object-fit: contain;
+}
+
+/* R-CHAT — thumbnail preview + caption strip (211×73 + 209×20). */
 .rj-chat {
   position: relative;
-  flex: 1 1 auto;
-  height: 100%;
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  width: 210.809px;
+  cursor: pointer;
+  -webkit-user-drag: none;
+  text-decoration: none;
+}
+
+.rj-chat-media {
+  display: block;
+  width: 100%;
+  height: 72.804px;
   border: 1px solid #632b8f;
   box-sizing: border-box;
   overflow: hidden;
-  display: block;
-  cursor: pointer;
-  -webkit-user-drag: none;
 }
 
 .rj-chat-thumb {
@@ -500,17 +524,19 @@ body {
 }
 
 .rj-chat-label {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding: 2px 7px;
-  background: rgba(0, 0, 0, 0.55);
-  color: #eaeaea;
-  font-size: var(--rj-figma-text);
-  letter-spacing: 0.08em;
+  display: block;
+  width: 100%;
+  height: 19.565px;
+  padding: 0 8px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.5);
+  color: #e6e4e6;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro', system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -1.12px;
   text-align: right;
-  line-height: 1.5;
+  line-height: 19.565px;
   pointer-events: none;
 }
 
@@ -723,7 +749,7 @@ body {
 }
 
 .rj-project {
-  color: var(--rj-link);
+  color: var(--rj-project-color);
 }
 
 .rj-project-trigger {
@@ -733,11 +759,11 @@ body {
   border-radius: 0;
   box-sizing: content-box;
   display: inline-block;
-  padding: 2px 2px;
-  margin: -2px -2px;
+  padding: 0 2px;
+  margin: 0 -2px;
   font: inherit;
   line-height: normal;
-  color: inherit;
+  color: var(--rj-project-color);
   cursor: pointer;
   text-align: left;
   vertical-align: baseline;
@@ -800,6 +826,33 @@ body {
   display: none;
 }
 
+/* Hover preview — works of the hovered (not pinned) artist appear non-interactive:
+   project titles pink at 35%, numbers gray at 35%. */
+.rj-projects.is-previewing:not(.is-pinned) .rj-artist-works-group:not([hidden]) {
+  pointer-events: none;
+}
+
+.rj-projects.is-previewing:not(.is-pinned) .rj-artist-works-group:not([hidden]) .rj-project,
+.rj-projects.is-previewing:not(.is-pinned) .rj-artist-works-group:not([hidden]) .rj-project-trigger {
+  color: var(--rj-pink-35);
+}
+
+.rj-projects.is-previewing:not(.is-pinned) .rj-artist-works-group:not([hidden]) .rj-work-index {
+  color: var(--rj-project-color);
+}
+
+/* Pinned artist — projects switch to full pink. */
+.rj-projects.is-pinned .rj-artist-works-group:not([hidden]) .rj-project,
+.rj-projects.is-pinned .rj-artist-works-group:not([hidden]) .rj-project-trigger {
+  color: var(--rj-link);
+}
+
+.rj-projects.is-pinned .rj-artist-works-group:not([hidden]) .rj-project-trigger:hover,
+.rj-projects.is-pinned .rj-artist-works-group:not([hidden]) .rj-project-trigger:focus-visible {
+  background-color: var(--rj-project-hover-bg);
+  color: var(--rj-project-hover-text);
+}
+
 /* Decorative scrollbar-style guide to the left of the artist list (Figma 41:126:
    #632b8f at 20%, 3px wide, spanning the list). The list is nudged right to clear it. */
 .rj-artist-list {
@@ -843,7 +896,7 @@ body {
 .rj-artist-index,
 .rj-work-index {
   flex: 0 0 auto;
-  color: #000000;
+  color: var(--rj-index-color);
   font-variant-numeric: tabular-nums;
   font-feature-settings: "tnum";
 }
@@ -854,17 +907,10 @@ body {
   flex: 0 0 2.35em;
 }
 
-/* Figma 265:74 — work index x≈953.23, title x≈1056.59 (≈103.4px at 16px) */
 .rj-work-index {
-  width: 6.46em;
-  flex: 0 0 6.46em;
-}
-
-@media (prefers-color-scheme: dark) {
-  .rj-artist-index,
-  .rj-work-index {
-    color: var(--rj-text);
-  }
+  width: auto;
+  flex: 0 0 auto;
+  margin-right: 8px;
 }
 
 html.rj-projects-scroll-locked body {
@@ -882,8 +928,8 @@ html.rj-projects-scroll-locked body {
   border-radius: 0;
   box-sizing: content-box;
   display: inline-block;
-  padding: 2px 2px;
-  margin: -2px -2px;
+  padding: 0 2px;
+  margin: 0 -2px;
   font: inherit;
   line-height: normal;
   color: var(--rj-link);
@@ -919,119 +965,64 @@ html.rj-projects-scroll-locked body {
   height: 40px;
 }
 
+.rj-time,
+.rj-timer {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  color: var(--rj-index-color);
+}
+
 .rj-time {
   position: absolute;
   bottom: 40px;
   right: calc(var(--gap-red) * 2);
   font-size: var(--rj-figma-text);
-  color: var(--rj-text);
   font-family: var(--rj-font-ui);
 }
 
-/* Music player — sits at the bottom of the content sheet, to the right of the
-   sidebar email. Powered by the self-contained <waveform-player> web component:
-   a canvas waveform whose columns react to the track in real time (Web Audio
-   FFT). Click the waveform to play/pause. */
-.rj-player {
-  position: absolute;
-  left: var(--gap-green);
-  bottom: var(--gap-green);
-  z-index: 4;
+/* Temporary Vercel holding page — timer only, centered. */
+body.rj-closed-page {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--rj-page-bg);
+}
+
+.rj-closed {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 4px;
-  width: 189.523px;
-  color: var(--rj-text);
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  padding: var(--gap-red);
+  box-sizing: border-box;
+}
+
+.rj-closed-timer {
   font-family: var(--rj-font-ui);
-  font-size: var(--rj-figma-text);
+  font-size: clamp(36px, 9vw, 72px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
   line-height: 1;
+  text-align: center;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Control row: play/pause button + the title/waveform stack. */
-.rj-player-bar {
-  position: relative;
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-  width: 100%;
-  min-height: 28px;
-  padding-left: 33px;
-}
-
-/* Waveform spans the whole bar — behind both the play button and the title. */
-.rj-waveform {
+/* Player placeholder — static image while the live waveform player is disabled. */
+.rj-player {
   position: absolute;
-  inset: 0;
-  z-index: 0;
-  display: block;
-}
-
-.rj-player-toggle {
-  position: relative;
-  z-index: 1;
-  flex: 0 0 auto;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  width: 12px;
-  height: 12px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--rj-player-icon);
-  cursor: pointer;
-  transition: color 120ms ease;
-}
-
-.rj-player-toggle:hover {
-  color: var(--rj-player-icon-hover);
-}
-
-/* Play state: a right-pointing triangle. */
-.rj-player-icon {
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 5px 0 5px 8px;
-  border-color: transparent transparent transparent currentColor;
-}
-
-/* Pause state: two vertical bars (swap via .is-playing on the button). */
-.rj-player-toggle.is-playing .rj-player-icon {
-  position: relative;
-  width: 8px;
-  height: 11px;
-  border: 0;
-}
-
-.rj-player-toggle.is-playing .rj-player-icon::before,
-.rj-player-toggle.is-playing .rj-player-icon::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  width: 2.5px;
-  height: 11px;
-  background: currentColor;
-}
-
-.rj-player-toggle.is-playing .rj-player-icon::before { left: 0; }
-.rj-player-toggle.is-playing .rj-player-icon::after { right: 0; }
-
-.rj-player-title {
-  position: relative;
-  z-index: 1;
-  flex: 1 1 auto;
+  left: 13px;
+  bottom: 9px;
+  z-index: 4;
   pointer-events: none;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: #808081;
-  padding-bottom: 3px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.rj-player-image {
+  display: block;
+  width: 612px;
+  height: 23px;
 }
 
 .rj-modal {
@@ -1375,7 +1366,7 @@ html.rj-projects-scroll-locked body {
   --rj-trayma-light-active-opacity: 0.28;
   --rj-trayma-text-light-active-opacity: 0.31;
   --rj-trayma-text-light-hint-opacity: 0.06;
-  --rj-trayma-time-color: #FFFFFF;
+  --rj-trayma-time-color: var(--rj-index-color);
   background-color: var(--rj-trayma-bg);
   color: var(--rj-trayma-time-color);
   align-items: center;
@@ -1762,8 +1753,7 @@ html.rj-projects-scroll-locked body {
 
   .rj-player {
     position: static;
-    width: 100%;
-    max-width: none;
+    padding: 0 0 9px 13px;
     margin-top: var(--gap-green);
   }
 
